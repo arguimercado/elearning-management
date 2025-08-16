@@ -4,7 +4,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-
 import {
    Form,
    FormField,
@@ -18,6 +17,9 @@ import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import ButtonLoading from "@/components/commons/button-loading";
+import { MailIcon } from "lucide-react";
 
 const signInSchema = z.object({
    email: z.email("Enter a valid email"),
@@ -26,9 +28,9 @@ const signInSchema = z.object({
 type SignInValues = z.infer<typeof signInSchema>;
 
 const LocalAuth = () => {
+   const router = useRouter();
+   const [emailPending, startEmailPending] = useTransition();
 
-   const [emailTransition, startEmailTransition] = useTransition();
-   
    const form = useForm<SignInValues>({
       resolver: zodResolver(signInSchema),
       defaultValues: { email: "" },
@@ -36,22 +38,26 @@ const LocalAuth = () => {
    });
 
    function onSubmit(values: SignInValues) {
-      startEmailTransition(async () => {
+      const {email} = values;
+      startEmailPending(async () => {
          await authClient.emailOtp.sendVerificationOtp({
-            email: values.email,
+            email,
             type: "sign-in",
             fetchOptions: {
                onSuccess: () => {
                   form.reset();
                   toast.success("Verification code sent!");
-               }
-            }
+                  router.push(`/verify-request?email=${email}`);
+               },
+               onError: () => {
+                  toast.error(
+                     "Failed to send verification code. Please try again."
+                  );
+               },
+            },
          });
-      })
-    
+      });
    }
-
-   
 
    return (
       <>
@@ -75,9 +81,16 @@ const LocalAuth = () => {
                      </FormItem>
                   )}
                />
-               <Button type="submit" className="w-full">
-                  Email Sign in
-               </Button>
+               <ButtonLoading 
+                  loading={emailPending}
+                  loadingText="Sending..."
+                  type="submit" 
+                  className="w-full" >
+                  <MailIcon className="mr-2 size-4" />
+                  <span>
+                     Email Sign in
+                  </span>
+               </ButtonLoading>
             </form>
          </Form>
       </>
