@@ -6,16 +6,10 @@ import { useForm } from "react-hook-form";
 
 import {
    Form,
-   FormField,
-   FormItem,
-   FormLabel,
-   FormControl,
-   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import InputField from "@/components/commons/inputs/input-field";
 import { useTransition } from "react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import ButtonLoading from "@/components/commons/button-loading";
@@ -63,23 +57,12 @@ const LocalAuth = () => {
       <>
          <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-               <FormField
+               <InputField
                   control={form.control}
                   name="email"
-                  render={({ field }) => (
-                     <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                           <Input
-                              placeholder="you@example.com"
-                              type="email"
-                              autoComplete="email"
-                              {...field}
-                           />
-                        </FormControl>
-                        <FormMessage />
-                     </FormItem>
-                  )}
+                  label="Email"
+                  type="email"
+                  placeholder="you@example.com"
                />
                <ButtonLoading 
                   loading={emailPending}

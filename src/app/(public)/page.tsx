@@ -1,9 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
 import FeatureCard from "./_components/feature-card";
-import SignOutButton from "../../components/commons/signout-button";
 
 interface FeatureProps {
    title: string;
@@ -65,16 +63,6 @@ const Home = () => {
                         >
                            Explore Courses
                         </Link>
-                        <Link
-                           className={buttonVariants({
-                              size: "lg",
-                              variant: "outline",
-                           })}
-                           href="/sign-in"
-                        >
-                           Sign in
-                        </Link>
-                           
                      </div>
                   </div>
                </div>

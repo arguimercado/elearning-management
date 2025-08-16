@@ -1,7 +1,7 @@
 "use client";
 
 import ButtonLoading from "@/components/commons/button-loading";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

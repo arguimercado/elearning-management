@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { Github, Globe, Loader } from "lucide-react";
 import { useTransition } from "react";
 import { toast } from "sonner";

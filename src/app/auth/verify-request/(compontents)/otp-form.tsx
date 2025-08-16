@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { OTPInput, type RenderProps, type SlotProps } from "input-otp";
 import { Button } from "@/components/ui/button";
 import { otpSchema, OtpValues } from "@/model/schemas/auth-schema";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ButtonLoading from "@/components/commons/button-loading";

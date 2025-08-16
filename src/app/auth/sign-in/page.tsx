@@ -11,7 +11,7 @@ import {
 import { GraduationCap } from "lucide-react";
 import SocialAuth from "./_components/social-auth";
 import LocalAuth from "./_components/local-auth";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/dist/server/request/headers";
 import { redirect } from "next/navigation";
 

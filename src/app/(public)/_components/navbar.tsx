@@ -1,10 +1,11 @@
 import UserDropdown from "@/components/commons/user-dropdown";
 import ThemeToggle from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
+import { ROUTES } from "@/model/constants/router";
 
 const navItems = [
    {
@@ -17,7 +18,7 @@ const navItems = [
    },
    {
       name: "Dashboard",
-      href: "/dashboard",
+      href: ROUTES.DASHBOARD
    },
 ];
 
@@ -66,7 +67,7 @@ const Navbar = async () => {
                         image: session.user.image || null
                      }}
                   />
-                  ) : (<Link className={buttonVariants({ variant: "outline" })} href="/sign-in">Sign In</Link>)}
+                  ) : (<Link className={buttonVariants({ variant: "outline" })} href={ROUTES.AUTH_SIGN_IN}>Sign In</Link>)}
             </div>
          </div>
       </header>
