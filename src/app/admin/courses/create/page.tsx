@@ -8,9 +8,11 @@ import { toast } from "sonner";
 
 import PageHeader from "@/components/commons/page-header";
 import { ROUTES } from "@/model/constants/router";
-import { CourseSchema, CourseForm, generateSlug, courseSchema } from "@/model/schemas/course-schema";
+import { CourseSchema, courseSchema } from "@/model/schemas/course-schema";
 import { createCourse } from "@/lib/actions/course-action";
 import CourseFormComponent from "./_components/course-form";
+import {generateSlug} from "@/lib/hooks/util";
+import CourseForm from "./_components/course-form";
 
 
 
@@ -45,7 +47,7 @@ const CourseFormPage = () => {
     }
   }, [watchTitle, form]);
 
-  const onSubmit = (values: CourseForm) => {
+  const onSubmit = (values: CourseSchema) => {
     startTransition(async () => {
       try {
         console.log("Course Data:", values);

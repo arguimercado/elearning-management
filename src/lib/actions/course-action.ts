@@ -5,13 +5,14 @@ import { prisma } from "@/lib/db";
 import { ROUTES } from "@/model/constants/router";
 import {
   courseFilterSchema,
-  generateSlug,
+
   CourseSchema,
   courseSchema
 } from "@/model/schemas/course-schema";
 import { getCurrentUser } from "../auth/auth-server";
 import { Pagination } from "@/model/types/global";
 import { handleError } from "../hooks/error";
+import {generateSlug} from "../hooks/util";
 
 
 

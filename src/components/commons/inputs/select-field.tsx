@@ -87,8 +87,8 @@ function SelectField<
               ))}
             </SelectContent>
           </Select>
-          {description && <FormDescription>{description}</FormDescription>}
-          <FormMessage />
+
+          <FormMessage className="text-red-600 dark:text-red-500 text-xs font-medium" />
         </FormItem>
       )}
     />
