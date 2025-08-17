@@ -1,5 +1,5 @@
 
-declare interface Course {
+declare interface CourseModel {
   id: string;
   title: string;
   description?: string | null;

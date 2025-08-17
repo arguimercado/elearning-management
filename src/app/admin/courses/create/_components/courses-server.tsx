@@ -53,8 +53,9 @@ function CoursesLoading() {
 
 // Main server component
 async function CoursesPage({ searchParams }: CoursesPageProps) {
+  
   // Fetch courses data on the server
-  let coursesData: any = null;
+  let coursesData: Array<CourseModel> = null;
   let error: string | null = null;
 
   try {

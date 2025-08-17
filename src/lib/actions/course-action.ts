@@ -1,42 +1,30 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db";
 import { ROUTES } from "@/model/constants/router";
-import { 
-  createCourseSchema, 
-  updateCourseSchema, 
+import {
   courseFilterSchema,
   generateSlug,
-  type CourseForm
+  CourseSchema,
+  courseSchema
 } from "@/model/schemas/course-schema";
 import { getCurrentUser } from "../auth/auth-server";
 import { Pagination } from "@/model/types/global";
+import { handleError } from "../hooks/error";
 
-// Helper function for error handling
-function handleError(error: unknown, operation: string) {
-  console.error(`Error in ${operation}:`, error);
-  
-  if (error instanceof Error) {
-    throw new Error(`Failed to ${operation}: ${error.message}`);
-  }
-  
-  throw new Error(`Failed to ${operation}: Unknown error occurred`);
-}
+
 
 /**
  * Create a new course
  */
-export async function createCourse(data: CourseForm) {
+export async function createCourse(data: CourseSchema) {
   try {
     // Get current user
     const user = await getCurrentUser();
 
     // Validate form data
-    const validatedData = createCourseSchema.parse({
+    const validatedData = courseSchema.parse({
       ...data,
       userId: user.id,
       slug: data.slug || generateSlug(data.title)
@@ -56,14 +44,16 @@ export async function createCourse(data: CourseForm) {
       data: {
         title: validatedData.title,
         description: validatedData.description || null,
-        slug: validatedData.slug,
+        slug: validatedData.slug!,
         category: validatedData.category,
         level: validatedData.level,
         duration: validatedData.duration,
         price: validatedData.price,
         status: validatedData.status,
         thumbnail: validatedData.thumbnail || null,
-        userId: validatedData.userId!
+        userId: user.id!,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       include: {
         user: {
@@ -94,7 +84,7 @@ export async function createCourse(data: CourseForm) {
 /**
  * Update an existing course
  */
-export async function updateCourse(courseId: string, data: Partial<CourseForm>) {
+export async function updateCourse(courseId: string, data: Partial<CourseSchema>) {
   try {
     // Get current user
     const user = await getCurrentUser();
@@ -115,14 +105,14 @@ export async function updateCourse(courseId: string, data: Partial<CourseForm>) 
 
     // Prepare update data
     const updateData: any = { ...data };
-    
+
     // Generate new slug if title is being updated
     if (data.title && data.title !== existingCourse.title) {
       updateData.slug = generateSlug(data.title);
-      
+
       // Check if new slug already exists (excluding current course)
       const existingSlug = await prisma.course.findFirst({
-        where: { 
+        where: {
           slug: updateData.slug,
           id: { not: courseId }
         }
@@ -134,7 +124,7 @@ export async function updateCourse(courseId: string, data: Partial<CourseForm>) 
     }
 
     // Validate update data
-    const validatedData = updateCourseSchema.parse({
+    const validatedData = courseSchema.parse({
       id: courseId,
       ...updateData
     });
@@ -167,7 +157,7 @@ export async function updateCourse(courseId: string, data: Partial<CourseForm>) 
     // Revalidate relevant pages
     revalidatePath(ROUTES.DASHBOARD_COURSES);
     revalidatePath(`/admin/courses/${updatedCourse.slug}`);
-    
+
     // If slug changed, revalidate old slug path too
     if (existingCourse.slug !== updatedCourse.slug) {
       revalidatePath(`/admin/courses/${existingCourse.slug}`);
@@ -223,100 +213,49 @@ export async function deleteCourse(courseId: string) {
   }
 }
 
+
+
 /**
  * Get courses with filtering and pagination
  */
 export async function getCourses(searchParams?: Record<string, string | string[] | undefined>) {
   try {
-    // Get current user
-    const user = await getCurrentUser();
 
-    // Parse and validate filter parameters
+     // Parse and validate filter parameters
     const filters = courseFilterSchema.parse({
       search: searchParams?.search || "",
       category: searchParams?.category || "",
-      level: searchParams?.level || "",
-      status: searchParams?.status || "",
-      minPrice: searchParams?.minPrice ? Number(searchParams.minPrice) : undefined,
-      maxPrice: searchParams?.maxPrice ? Number(searchParams.maxPrice) : undefined,
       page: searchParams?.page ? Number(searchParams.page) : 1,
       limit: searchParams?.limit ? Number(searchParams.limit) : 10,
-      sortBy: searchParams?.sortBy || "createdAt",
       sortOrder: searchParams?.sortOrder || "desc",
     });
 
-    // Build where clause
-    const where: any = {
-      userId: user.id, // Only get current user's courses
+    // Get current user
+    const user = await getCurrentUser();
+
+   
+    const whereClause : any = {
+      userId: user.id
     };
-
-    if (filters.search) {
-      where.OR = [
-        { title: { contains: filters.search, mode: "insensitive" } },
-        { description: { contains: filters.search, mode: "insensitive" } },
-        { category: { contains: filters.search, mode: "insensitive" } }
-      ];
-    }
-
-    if (filters.category) {
-      where.category = filters.category;
-    }
-
-    if (filters.level) {
-      where.level = filters.level;
-    }
-
-    if (filters.status) {
-      where.status = filters.status;
-    }
-
-    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
-      where.price = {};
-      if (filters.minPrice !== undefined) {
-        where.price.gte = filters.minPrice;
-      }
-      if (filters.maxPrice !== undefined) {
-        where.price.lte = filters.maxPrice;
-      }
-    }
-
-    // Calculate pagination
-    const skip = (filters.page - 1) * filters.limit;
-
-    // Get courses and total count
-    const [courses, totalCount] = await Promise.all([
+    const [courses,totalCount] = await Promise.all([
       prisma.course.findMany({
-        where,
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true
-            }
-          }
-        },
-        orderBy: {
-          [filters.sortBy]: filters.sortOrder
-        },
-        skip,
-        take: filters.limit,
+        where:whereClause
       }),
-      prisma.course.count({ where })
+      prisma.course.count({where: whereClause})
     ]);
 
-    // Calculate pagination metadata
+        // Calculate pagination metadata
     const totalPages = Math.ceil(totalCount / filters.limit);
-    const hasNextPage = filters.page < totalPages;
-    const hasPreviousPage = filters.page > 1;
-
-
-    const data : Pagination<Course> = {
+    const data : Pagination<CourseModel> = {
       totalCount,
+      hasNextPage: filters.page < totalPages,
+      hasPreviousPage: filters.page > 1,
       page: filters.page,
       limit: filters.limit,
       data: courses
     };
+
+    console.log("Courses data:", data);
 
     return {
       success: true,
@@ -335,7 +274,7 @@ export async function getCourseById(courseId: string) {
     const user = await getCurrentUser();
 
     const course = await prisma.course.findFirst({
-      where: { 
+      where: {
         id: courseId,
         userId: user.id // Only get user's own courses
       },
@@ -372,7 +311,7 @@ export async function getCourseBySlug(slug: string) {
     const user = await getCurrentUser();
 
     const course = await prisma.course.findFirst({
-      where: { 
+      where: {
         slug,
         userId: user.id // Only get user's own courses
       },
@@ -409,7 +348,7 @@ export async function toggleCourseStatus(courseId: string) {
     const user = await getCurrentUser();
 
     const existingCourse = await prisma.course.findFirst({
-      where: { 
+      where: {
         id: courseId,
         userId: user.id
       }
@@ -457,7 +396,7 @@ export async function duplicateCourse(courseId: string) {
     const user = await getCurrentUser();
 
     const existingCourse = await prisma.course.findFirst({
-      where: { 
+      where: {
         id: courseId,
         userId: user.id
       }

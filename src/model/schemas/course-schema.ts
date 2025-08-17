@@ -6,7 +6,6 @@ export const CourseStatusEnum = z.enum(["Draft", "Published", "Archive"]);
 
 // Base course schema - matches Prisma model structure
 export const courseSchema = z.object({
-  id: z.uuid("Invalid course ID format"),
   title: z
     .string()
     .min(1, "Course title is required")
@@ -50,21 +49,6 @@ export const courseSchema = z.object({
     .url("Thumbnail must be a valid URL")
     .optional()
     .nullable()
-});
-
-// Schema for creating a new course (excludes auto-generated fields)
-export const createCourseSchema = courseSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-}).extend({
-  // Make userId optional for forms where it's set from context
-  userId: z.string().uuid("Invalid user ID format").optional(),
-});
-
-// Schema for updating an existing course (all fields optional except id)
-export const updateCourseSchema = courseSchema.partial().extend({
-  id: z.string().uuid("Invalid course ID format"), // ID is required for updates
 });
 
 // Schema for course creation form (frontend form data)
@@ -125,13 +109,8 @@ export const courseFormSchema = z
 export const courseFilterSchema = z.object({
   search: z.string().optional(),
   category: z.string().optional(),
-  level: CourseLevelEnum.optional(),
-  status: CourseStatusEnum.optional(),
-  minPrice: z.number().nonnegative().optional(),
-  maxPrice: z.number().nonnegative().optional(),
   page: z.number().int().positive().default(1),
   limit: z.number().int().positive().max(100).default(10),
-  sortBy: z.enum(["title", "price", "createdAt", "updatedAt"]).default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
@@ -147,14 +126,11 @@ export const courseSlugSchema = z.object({
 });
 
 export const courseIdSchema = z.object({
-  id: z.string().uuid("Invalid course ID format"),
+  id: z.uuid("Invalid course ID format"),
 });
 
 // Type definitions
-export type Course = z.infer<typeof courseSchema>;
-export type CreateCourse = z.infer<typeof createCourseSchema>;
-export type UpdateCourse = z.infer<typeof updateCourseSchema>;
-export type CourseForm = z.infer<typeof courseFormSchema>;
+export type CourseSchema = z.infer<typeof courseSchema>;
 export type CourseFilter = z.infer<typeof courseFilterSchema>;
 export type CourseLevel = z.infer<typeof CourseLevelEnum>;
 export type CourseStatus = z.infer<typeof CourseStatusEnum>;

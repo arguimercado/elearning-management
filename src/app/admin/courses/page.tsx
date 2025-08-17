@@ -1,120 +1,42 @@
-"use client";
 
-import { useState } from "react";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import PageHeader from "@/components/commons/page-header";
 import StatusCard from "@/components/commons/status-card";
 import {
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableHeader,
-   TableRow,
-} from "@/components/ui/table";
-import {
-   DropdownMenu,
-   DropdownMenuContent,
-   DropdownMenuItem,
-   DropdownMenuLabel,
-   DropdownMenuSeparator,
-   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-   AlertDialog,
-   AlertDialogAction,
-   AlertDialogCancel,
-   AlertDialogContent,
-   AlertDialogDescription,
-   AlertDialogFooter,
-   AlertDialogHeader,
-   AlertDialogTitle,
-   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
    Plus,
-   Search,
-   Filter,
-   MoreHorizontal,
-   Edit,
    Eye,
-   Trash2,
    BookOpen,
    Clock,
    DollarSign,
-   Users,
 } from "lucide-react";
 import { ROUTES } from "@/model/constants/router";
 import { getCourses } from "@/lib/actions/course-action";
 import React from "react";
-import { Pagination } from "@/model/types/global";
+import { CoursesDataTable } from "./_components/courses-data-table";
 
-// Mock data - replace with actual API call
-const mockCourses = [
-   {
-      id: "1",
-      title: "Introduction to React",
-      description: "Learn the basics of React development",
-      instructor: "John Doe",
-      category: "Programming",
-      level: "Beginner",
-      duration: "8 weeks",
-      price: 99.99,
-      isPublished: true,
-      thumbnail: null,
-      createdAt: new Date("2024-01-15"),
-      updatedAt: new Date("2024-02-01"),
-      students: 156,
-   },
-   {
-      id: "2",
-      title: "Advanced JavaScript",
-      description: "Master advanced JavaScript concepts",
-      instructor: "Jane Smith",
-      category: "Programming",
-      level: "Advanced",
-      duration: "12 weeks",
-      price: 149.99,
-      isPublished: true,
-      thumbnail: null,
-      createdAt: new Date("2024-01-10"),
-      updatedAt: new Date("2024-01-25"),
-      students: 89,
-   },
-   {
-      id: "3",
-      title: "UI/UX Design Fundamentals",
-      description: "Learn the principles of user interface design",
-      instructor: "Mike Johnson",
-      category: "Design",
-      level: "Intermediate",
-      duration: "6 weeks",
-      price: 79.99,
-      isPublished: false,
-      thumbnail: null,
-      createdAt: new Date("2024-02-01"),
-      updatedAt: new Date("2024-02-15"),
-      students: 0,
-   },
-   {
-      id: "4",
-      title: "Digital Marketing Strategy",
-      description: "Complete guide to digital marketing",
-      instructor: "Sarah Wilson",
-      category: "Marketing",
-      level: "Beginner",
-      duration: "10 weeks",
-      price: 129.99,
-      isPublished: true,
-      thumbnail: null,
-      createdAt: new Date("2024-01-20"),
-      updatedAt: new Date("2024-02-10"),
-      students: 234,
-   },
-];
+
+// Loading component for Suspense
+function CoursesLoading() {
+  return (
+    <div className="space-y-6">
+      {/* Stats Cards Skeleton */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-32 bg-gray-200 rounded-lg animate-pulse" />
+        ))}
+      </div>
+
+      {/* Content Skeleton */}
+      <div className="space-y-4">
+        <div className="h-10 bg-gray-200 rounded animate-pulse" />
+        <div className="h-64 bg-gray-200 rounded animate-pulse" />
+      </div>
+    </div>
+  );
+}
+
 
 interface CoursesPageProps {
    searchParams?: {
@@ -127,24 +49,12 @@ interface CoursesPageProps {
    };
 }
 
-
-
 const CoursesPage = async ({ searchParams }: CoursesPageProps) => {
    // Fetch courses data on the server
-   let coursesData: Pagination<Course> = {} as Pagination<Course>;
-   let error: string | null = null;
+   
 
-   try {
-      const result = await getCourses(searchParams);
-      if (result?.success) {
-         coursesData = result.data;
-      } else {
-         error = "Failed to fetch courses";
-      }
-   } catch (err) {
-      error = err instanceof Error ? err.message : "Failed to fetch courses";
-   }
-
+   const result = await getCourses(searchParams);
+   const coursesData = result?.data;
    const stats = coursesData
       ? {
            totalCourses: coursesData.totalCount,
@@ -204,6 +114,12 @@ const CoursesPage = async ({ searchParams }: CoursesPageProps) => {
                description="From published courses"
                icon={DollarSign}
             />
+         </div>
+
+         {/* Courses Data Table */}
+         <div className="space-y-4">
+            <h2 className="text-2xl font-bold tracking-tight">All Courses</h2>
+            <CoursesDataTable data={coursesData?.data || []} />
          </div>
       </div>
    );
