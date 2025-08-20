@@ -8,6 +8,7 @@ import SelectField from "@/components/commons/inputs/select-field";
 import {UseFormReturn} from "react-hook-form";
 import Image from "next/image";
 import RichTextEditor from "@/components/commons/inputs/rich-text-editor/editor";
+import FileUploader from "@/components/commons/inputs/files/file-uploader";
 
 interface CourseFormComponentProps {
   form: UseFormReturn<CourseSchema>;
@@ -146,14 +147,14 @@ const CourseFormComponent = ({form, onSubmit, isPending = false, onCancel}: Cour
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col">
                 {/* Thumbnail */}
-                <InputField
+                <FormField 
                   control={form.control}
                   name="thumbnail"
-                  label="Course Thumbnail"
-                  placeholder="https://example.com/image.jpg"
-                  description="Enter a valid image URL"
+                  render={({field}) => (
+                    <FileUploader />
+                  )}
                 />
-
+               
                 {/* Preview the image using NextJS Image */}
                 {form.watch("thumbnail") && (
                   <Image

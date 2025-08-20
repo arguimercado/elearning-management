@@ -42,9 +42,6 @@ export const columns: ColumnDef<CourseModel>[] = [
       return (
         <div className="flex flex-col">
           <span className="font-medium">{course.title}</span>
-          <span className="text-sm text-muted-foreground truncate max-w-[200px]">
-            {course.description}
-          </span>
         </div>
       )
     },
