@@ -27,6 +27,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     ],
     content: value || '<p></p>',
     onUpdate({ editor }) {
+      console.log(editor.getHTML());
       onChange?.(editor.getHTML());
     },
     immediatelyRender: false,

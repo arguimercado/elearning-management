@@ -45,8 +45,7 @@ export const courseSchema = z.object({
     .max(9999.99, "Price cannot exceed $9,999.99")
     .default(0.0),
   status: CourseStatusEnum.default("Draft"),
-  thumbnail: z
-    .url("Thumbnail must be a valid URL")
+  thumbnail: z.string()
     .optional()
     .nullable()
 })

@@ -1,5 +1,7 @@
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { CloudUploadIcon, ImageIcon } from "lucide-react"
+import { CloudUploadIcon, ImageIcon, XIcon } from "lucide-react"
+import Image from "next/image"
 
 export const RenderEmptyState = ({isDragActive} : {isDragActive: boolean}) => {
    return(
@@ -22,4 +24,38 @@ export const RenderErrorState = () => {
       </div>
    )
 }
+
+export const RenderUploadedState = ({
+   previewUrl,
+   isDeleting,
+   onDeleteClick
+} : { previewUrl: string,isDeleting: boolean, onDeleteClick: () => void }) => {
   
+   const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      //preventing the parent to trigger
+      //e.stopPropagation();
+      console.log("Delete clicked");
+      onDeleteClick();
+   };
+   
+   return (
+      <div>
+         <Image src={previewUrl} alt="Uploaded file preview" fill className="object-contain p-2" />
+         <Button disabled={isDeleting} type="button" variant={"destructive"} size="icon" className={cn("absolute top-4 right-4")} onClick={handleDeleteClick}>
+            <XIcon className="size-4"/>
+         </Button>
+      </div>
+   )
+} 
+
+
+export const RenderUploadingState = ({progress,file} : {progress: number,file?: File | null}) => {
+   return (
+      <div>
+         <p className="text-base font-semibold text-foreground">Uploading {file?.name}</p>
+         <div className="relative w-full h-2 bg-muted rounded-full">
+            <div className="absolute top-0 left-0 h-full bg-primary rounded-full" style={{ width: `${progress}%` }} />
+         </div>
+      </div>
+   )
+}

@@ -2,9 +2,9 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FileRejection, useDropzone } from "react-dropzone";
-import { RenderEmptyState, RenderErrorState } from "./render-state";
+import { RenderEmptyState, RenderErrorState, RenderUploadedState, RenderUploadingState } from "./render-state";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
@@ -20,7 +20,13 @@ interface UploadState {
    fileType: "image" | "video";
 }
 
-const FileUploader = () => {
+interface IProps {
+   value?: string | null
+   onChange?: (value: string) => void
+}
+
+const FileUploader = ({value, onChange}: IProps) => {
+
    const [fileState, setFileState] = useState<UploadState>({
       isError: false,
       file: null,
@@ -29,11 +35,16 @@ const FileUploader = () => {
       progress: 0,
       isDeleting: false,
       fileType: "image",
+      key: value || undefined,
    });
 
    const onDrop = useCallback((acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
          const file = acceptedFiles[0];
+
+         if(fileState.objectUrl && !fileState.objectUrl.startsWith("http:")) {
+            URL.revokeObjectURL(fileState.objectUrl);
+         }
 
          setFileState({
             file: file,
@@ -45,10 +56,60 @@ const FileUploader = () => {
             isDeleting: false,
             fileType: "image",
          });
-      }
-   }, []);
 
-   const uploadFile = async (file: File) => {
+         uploadFile(file);
+         
+      }
+   }, [fileState.objectUrl]);
+
+   const handleRemoveFile = async () => {
+      if(fileState.isDeleting || !fileState.objectUrl) {
+         return;
+      }
+
+      try {
+         setFileState((prev) => ({
+            ...prev,
+            isDeleting: true,
+         }));
+
+         const response = await fetch(`/api/s3/delete`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: fileState.key }),
+         });
+
+         if (!response.ok) {
+            throw new Error("Failed to delete file");
+         }
+
+         if(fileState.objectUrl && !fileState.objectUrl.startsWith("http:")) {
+            URL.revokeObjectURL(fileState.objectUrl);
+         }
+         setFileState({
+            id: null,
+            file: null,
+            uploading: false,
+            progress: 0,
+            objectUrl: undefined,
+            isError: false,
+            isDeleting: false,
+            fileType: "image",
+         });
+         onChange?.("");
+         toast.success("File deleted successfully");
+      } 
+      catch (error: any) {
+         toast.error("Failed to delete file");
+          setFileState((prev) => ({
+               ...prev,
+               isError: true,
+               isDeleting: false,
+            }));
+      }
+   }
+
+   const uploadFile = useCallback(async (file: File) => {
       setFileState((prev) => ({
          ...prev,
          uploading: true,
@@ -83,6 +144,7 @@ const FileUploader = () => {
 
          const { presignedUrl, key } = await presigneResponse.json();
 
+
          await new Promise<void>((resolve, reject) => {
             const xhr = new XMLHttpRequest();
 
@@ -98,15 +160,18 @@ const FileUploader = () => {
 
             xhr.onload = () => {
                if (xhr.status === 200 || xhr.status === 204) {
+                  
                   setFileState((prev) => ({
                      ...prev,
                      uploading: false,
                      progress: 100,
                      key: key,
                   }));
+                  onChange?.(key);
                   toast.success("File uploaded successfully");
                   resolve(xhr.response);
-               } else {
+               } 
+               else {
                   reject(new Error("Failed to upload file"));
                }
             };
@@ -129,7 +194,7 @@ const FileUploader = () => {
             isError: true,
          }));
       }
-   };
+   }, []);
 
    const rejectedFiles = (fileRejection: FileRejection[]) => {
       if (fileRejection.length) {
@@ -150,11 +215,36 @@ const FileUploader = () => {
       }
    };
 
+   const renderContent = useCallback(({onDeleteClick} : {onDeleteClick: () => void}) => {
+      if(fileState.uploading) {
+         return(<RenderUploadingState progress={fileState.progress} file={fileState.file} />)
+      }
+
+      if(fileState.isError) {
+         return(<RenderErrorState />)
+      }
+
+      if(fileState.objectUrl) {
+         return <RenderUploadedState previewUrl={fileState.objectUrl} isDeleting={fileState.isDeleting} onDeleteClick={onDeleteClick} />
+      }
+
+      return <RenderEmptyState isDragActive={isDragActive} />
+   }, [fileState]);
+
+   useEffect(() => {
+      return () => {
+         if(fileState.objectUrl && !fileState.objectUrl.startsWith("http:")) {
+            URL.revokeObjectURL(fileState.objectUrl);
+         }
+      }
+   }, [fileState.objectUrl]);
+
    const { getRootProps, getInputProps, isDragActive } = useDropzone({
       accept: { "image/*": [] },
       maxFiles: 1,
       multiple: false,
       maxSize: 5 * 1024 * 1024, //5mb
+      disabled: fileState.uploading || !!fileState.objectUrl || fileState.isDeleting,
       onDropRejected: rejectedFiles,
       onDrop,
    });
@@ -171,7 +261,7 @@ const FileUploader = () => {
       >
          <CardContent className="flex items-center justify-center h-full w-full p-4">
             <input {...getInputProps()} />
-            <RenderEmptyState isDragActive={isDragActive} />
+            {renderContent({onDeleteClick: handleRemoveFile})}
          </CardContent>
       </Card>
    );

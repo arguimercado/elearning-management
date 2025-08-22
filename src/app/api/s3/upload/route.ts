@@ -16,10 +16,10 @@ export const fileUploadSchema = z.object({
 
 export async function POST(request: Request) {
    try {
-      const body = request.json();
-
+      const body = await request.json();
+      console.log("this is boday",body);
       const validation = fileUploadSchema.safeParse(body);
-
+      
       if(!validation.success) {
          return NextResponse.json({error: "Invalid Request Body"},{status: 400});
       }

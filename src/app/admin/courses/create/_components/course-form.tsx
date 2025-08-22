@@ -150,24 +150,9 @@ const CourseFormComponent = ({form, onSubmit, isPending = false, onCancel}: Cour
                 <FormField 
                   control={form.control}
                   name="thumbnail"
-                  render={({field}) => (
-                    <FileUploader />
-                  )}
+                  render={({field}) => (<FileUploader value={field.value} onChange={field.onChange} />)}
                 />
-               
-                {/* Preview the image using NextJS Image */}
-                {form.watch("thumbnail") && (
-                  <Image
-                    src={form.watch("thumbnail")!}
-                    alt="Thumbnail preview"
-                    className="w-full size-40 object-cover rounded-md border"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                    width={120}
-                    height={120}
-                  />
-                )}
+             
               </div>
               <div className="flex flex-col">
                 {/* Auto-generated Slug */}
