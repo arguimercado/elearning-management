@@ -13,28 +13,31 @@ import FileUploader from "@/components/commons/inputs/files/file-uploader";
 import { useEffect, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generateSlug } from "@/lib/hooks/util";
-import { createCourse } from "@/lib/data/course/course-service";
 import { toast } from "sonner";
 import { ROUTES } from "@/model/constants/router";
 import { useRouter } from "next/navigation";
+import { createCourse, updateCourse } from "@/lib/data/course";
 
-const useCourseForm = () => {
+const defaultValues: CourseSchema = {
+  title: "",
+  description: "",
+  slug: "",
+  category: "",
+  level: "BEGINNER",
+  duration: "",
+  price: 0,
+  status: "Draft",
+  thumbnail: "",
+};
+
+const useCourseForm = (isEdit: boolean, initialValues?: CourseSchema) => {
+
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const form = useForm<CourseSchema>({
     resolver: zodResolver(courseSchema) as any,
-    defaultValues: {
-      title: "",
-      description: "",
-      slug: "",
-      category: "",
-      level: "BEGINNER",
-      duration: "",
-      price: 0,
-      status: "Draft",
-      thumbnail: "",
-    },
+    defaultValues: initialValues ? initialValues : defaultValues
   });
 
    const watchTitle = form.watch("title");
@@ -47,19 +50,37 @@ const useCourseForm = () => {
     }
   }, [watchTitle, form]);
 
+  useEffect(() => {
+    if (initialValues) {
+      form.reset(initialValues);
+    }
+  }, [initialValues]);
+
   const onSubmit = (values: CourseSchema) => {
     startTransition(async () => {
       try {
         console.log("Course Data:", values);
-        // Call the server action to create course
-        const result = await createCourse(values);
-        
-        if (result?.success) {
-          toast.success(result.message || "Course created successfully!");
-          router.push(ROUTES.DASHBOARD_COURSES);
-        } else {
-          throw new Error("Failed to create course");
+        if(isEdit) {
+          const result = await updateCourse(values.id ?? "", values);
+          if (result?.success) {
+            toast.success(result.message || "Updated successfully!");
+            router.push(ROUTES.COURSE_LIST);
+          } else {
+            throw new Error("Failed to update course");
+          }
         }
+        else {
+          // Call the server action to create course
+          const result = await createCourse(values);
+          if (result?.success) {
+            toast.success(result.message || "Course created successfully!");
+            router.push(ROUTES.COURSE_LIST);
+          } else {
+            throw new Error("Failed to create course");
+          }
+
+        }
+        
       } 
       catch (error) {
         console.error("Error creating course:", error);
@@ -68,7 +89,7 @@ const useCourseForm = () => {
     });
   };
   const onCancel = () => {
-    router.push(ROUTES.DASHBOARD_COURSES);
+    router.push(ROUTES.COURSE_LIST);
   };
   return {
     form,
@@ -79,9 +100,15 @@ const useCourseForm = () => {
 
 }
 
-const CourseFormComponent = () => {
+interface IProps  {
+  initialValues?: CourseSchema;
+  isEdit?: boolean;
+  onSubmitForm?: (values: CourseSchema) => void;
+}
 
-  const {form, onSubmit, isPending, onCancel} = useCourseForm();
+const CourseFormComponent = ({initialValues, isEdit = false, onSubmitForm} : IProps) => {
+
+  const {form, onSubmit,isPending,onCancel} = useCourseForm(isEdit, initialValues);
 
   return (
     <Form {...form}>
@@ -92,6 +119,7 @@ const CourseFormComponent = () => {
             <CardTitle>Basic Information</CardTitle>
             <CardDescription>
               Provide the basic details for the new course.
+              {form.watch("id")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -213,7 +241,13 @@ const CourseFormComponent = () => {
                 <FormField 
                   control={form.control}
                   name="thumbnail"
-                  render={({field}) => (<FileUploader value={field.value} onChange={field.onChange} />)}
+                  render={({ field }) => (
+                    <FileUploader
+                      isPreview={isEdit}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
              
               </div>

@@ -1,4 +1,4 @@
-import UserDropdown from "@/components/commons/user-dropdown";
+import UserDropdown from "@/components/commons/misc/user-dropdown";
 import ThemeToggle from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { auth } from "@/lib/auth";

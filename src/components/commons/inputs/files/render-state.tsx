@@ -33,8 +33,7 @@ export const RenderUploadedState = ({
   
    const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       //preventing the parent to trigger
-      //e.stopPropagation();
-      console.log("Delete clicked");
+      e.stopPropagation();
       onDeleteClick();
    };
    

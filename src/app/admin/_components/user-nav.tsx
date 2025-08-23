@@ -1,5 +1,5 @@
 
-import Avatar from "@/components/commons/avatar";
+import Avatar from "@/components/commons/misc/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,

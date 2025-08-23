@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 import { useCallback, useEffect, useState } from "react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { RenderEmptyState, RenderErrorState, RenderUploadedState, RenderUploadingState } from "./render-state";
@@ -23,9 +23,10 @@ interface UploadState {
 interface IProps {
    value?: string | null
    onChange?: (value: string) => void
+   isPreview: boolean
 }
 
-const FileUploader = ({value, onChange}: IProps) => {
+const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
 
    const [fileState, setFileState] = useState<UploadState>({
       isError: false,
@@ -238,6 +239,19 @@ const FileUploader = ({value, onChange}: IProps) => {
          }
       }
    }, [fileState.objectUrl]);
+
+   useEffect(() => {
+      if(isPreview) {
+         setFileState((prev) => ({
+            ...prev,
+            key: value || undefined,
+            objectUrl: getImageUrl(value ?? "")
+         }));
+      }
+
+   },[isPreview])
+
+  
 
    const { getRootProps, getInputProps, isDragActive } = useDropzone({
       accept: { "image/*": [] },

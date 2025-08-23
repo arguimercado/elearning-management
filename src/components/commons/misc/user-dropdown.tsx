@@ -10,8 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import Avatar from "@/components/commons/avatar";
-import SignOutButton from "@/components/commons/signout-button";
+import Avatar from "@/components/commons/misc/avatar";
+import SignOutButton from "@/components/commons/buttons/signout-button";
 import { User, Settings, HelpCircle, ChevronDown } from "lucide-react";
 
 interface UserDropdownProps {

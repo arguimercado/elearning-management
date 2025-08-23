@@ -29,9 +29,15 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import Link from "next/link"
 import { ROUTES } from "@/model/constants/router"
 
+interface MenuItems {
+  title: string
+  url: string
+  icon: React.ElementType
+  items?: MenuItems[]
+}
 
 // Menu items for the dashboard
-const items = [
+const items: MenuItems[] = [
   {
     title: "Dashboard",
     url: ROUTES.DASHBOARD,
@@ -42,86 +48,11 @@ const items = [
     url: "/dashboard/analytics",
     icon: BarChart3,
   },
-  {
-    title: "Students",
-    url: "/dashboard/students",
-    icon: GraduationCap,
-    items: [
-      {
-        title: "All Students",
-        url: "/dashboard/students",
-      },
-      {
-        title: "Add Student",
-        url: "/dashboard/students/add",
-      },
-      {
-        title: "Student Reports",
-        url: "/dashboard/students/reports",
-      },
-    ],
-  },
-  {
-    title: "Teachers",
-    url: "/dashboard/teachers",
-    icon: Users,
-    items: [
-      {
-        title: "All Teachers",
-        url: "/dashboard/teachers",
-      },
-      {
-        title: "Add Teacher",
-        url: "/dashboard/teachers/add",
-      },
-      {
-        title: "Teacher Schedule",
-        url: "/dashboard/teachers/schedule",
-      },
-    ],
-  },
+ 
   {
     title: "Courses",
-    url: ROUTES.DASHBOARD_COURSES,
+    url: ROUTES.COURSE_LIST,
     icon: BookOpen,
-  },
-  {
-    title: "Departments",
-    url: "/dashboard/departments",
-    icon: Building,
-  },
-  {
-    title: "Finance",
-    url: "/dashboard/finance",
-    icon: CreditCard,
-    items: [
-      {
-        title: "Overview",
-        url: "/dashboard/finance",
-      },
-      {
-        title: "Fees",
-        url: "/dashboard/finance/fees",
-      },
-      {
-        title: "Payments",
-        url: "/dashboard/finance/payments",
-      },
-      {
-        title: "Reports",
-        url: "/dashboard/finance/reports",
-      },
-    ],
-  },
-  {
-    title: "Messages",
-    url: "/dashboard/messages",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "/dashboard/calendar",
-    icon: Calendar,
   },
   {
     title: "Reports",
@@ -131,6 +62,8 @@ const items = [
 ]
 
 const MainNav = () => {
+
+  
   return (
     <SidebarGroup>
           <SidebarGroupLabel>Main Menu</SidebarGroupLabel>

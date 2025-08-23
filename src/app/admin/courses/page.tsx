@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import PageHeader from "@/components/commons/page-header";
-import StatusCard from "@/components/commons/status-card";
+import PageHeader from "@/components/commons/misc/page-header";
+import StatusCard from "@/components/commons/misc/status-card";
 import {
    Plus,
    Eye,
@@ -12,9 +12,11 @@ import {
    DollarSign,
 } from "lucide-react";
 import { ROUTES } from "@/model/constants/router";
-import { getCourses } from "@/lib/data/course/course-service";
+
 import React from "react";
-import { CoursesDataTable } from "./_components/courses-data-table";
+import CoursesTabs from "./_components/courses-tab";
+import { getCourses } from "@/lib/data/course";
+
 
 
 // Loading component for Suspense
@@ -82,7 +84,7 @@ const CoursesPage = async (props: {searchParams? : Promise<CoursesPageProps>}) =
             description="Manage your courses and track their performance"
          >
             <Button className="w-full sm:w-auto" asChild>
-               <Link href={ROUTES.DASHBOARD_CREATE}>
+               <Link href={ROUTES.COURSE_CREATE}>
                   <Plus className="mr-2 h-4 w-4" />
                   Create Course
                </Link>
@@ -114,12 +116,7 @@ const CoursesPage = async (props: {searchParams? : Promise<CoursesPageProps>}) =
                icon={DollarSign}
             />
          </div>
-
-         {/* Courses Data Table */}
-         <div className="space-y-4">
-            <h2 className="text-2xl font-bold tracking-tight">All Courses</h2>
-            <CoursesDataTable data={coursesData?.data || []} />
-         </div>
+         <CoursesTabs coursesData={coursesData?.data || []} />
       </div>
    );
 };

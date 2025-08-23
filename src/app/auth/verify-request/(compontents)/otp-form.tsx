@@ -9,7 +9,7 @@ import { otpSchema, OtpValues } from "@/model/schemas/auth-schema";
 import { authClient } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import ButtonLoading from "@/components/commons/button-loading";
+import ButtonLoading from "@/components/commons/buttons/button-loading";
 
 const OtpForm: React.FC<{ email:string}> = ({
    email,

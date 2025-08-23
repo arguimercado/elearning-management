@@ -6,6 +6,7 @@ export const CourseStatusEnum = z.enum(["Draft", "Published", "Archive"]);
 
 // Base course schema - matches Prisma model structure
 export const courseSchema = z.object({
+  id: z.uuid().optional(), // UUID format for IDs
   title: z
     .string()
     .min(1, "Course title is required")

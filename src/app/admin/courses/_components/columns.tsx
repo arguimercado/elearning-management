@@ -172,20 +172,14 @@ export const columns: ColumnDef<CourseModel>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(course.id)}
-            >
-              Copy course ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`${ROUTES.DASHBOARD_COURSES}/${course.id}`}>
+              <Link href={ROUTES.COURSE_VIEW(course.id)}>
                 <Eye className="mr-2 h-4 w-4" />
                 View course
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={`${ROUTES.DASHBOARD_COURSES}/${course.id}/edit`}>
+              <Link href={`${ROUTES.COURSE_EDIT(course.id)}`}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit course
               </Link>

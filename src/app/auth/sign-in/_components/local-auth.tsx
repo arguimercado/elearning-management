@@ -12,7 +12,7 @@ import { useTransition } from "react";
 import { authClient } from "@/lib/auth/auth-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import ButtonLoading from "@/components/commons/button-loading";
+import ButtonLoading from "@/components/commons/buttons/button-loading";
 import { MailIcon } from "lucide-react";
 
 const signInSchema = z.object({
