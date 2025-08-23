@@ -1,7 +1,7 @@
 import UserDropdown from "@/components/commons/user-dropdown";
 import ThemeToggle from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
-import { auth } from "@/lib/auth/auth";
+import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";

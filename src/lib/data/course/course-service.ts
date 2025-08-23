@@ -5,16 +5,13 @@ import { prisma } from "@/lib/db";
 import { ROUTES } from "@/model/constants/router";
 import {
   courseFilterSchema,
-
   CourseSchema,
   courseSchema
 } from "@/model/schemas/course-schema";
-import { getCurrentUser } from "../auth/auth-server";
+import {getCurrentUser, requireAdminAccess } from "../admin/user-session";
 import { Pagination } from "@/model/types/global";
-import { handleError } from "../hooks/error";
-import {generateSlug} from "../hooks/util";
-
-
+import { handleError } from "../../hooks/error";
+import {generateSlug} from "../../hooks/util";
 
 /**
  * Create a new course
@@ -22,7 +19,7 @@ import {generateSlug} from "../hooks/util";
 export async function createCourse(data: CourseSchema) {
   try {
     // Get current user
-    const user = await getCurrentUser();
+    const user = await requireAdminAccess();
 
     // Validate form data
     const validatedData = courseSchema.parse({
@@ -39,6 +36,8 @@ export async function createCourse(data: CourseSchema) {
     if (existingCourse) {
       throw new Error("A course with this title already exists. Please choose a different title.");
     }
+
+  
 
     // Create the course
     const course = await prisma.course.create({
@@ -88,7 +87,7 @@ export async function createCourse(data: CourseSchema) {
 export async function updateCourse(courseId: string, data: Partial<CourseSchema>) {
   try {
     // Get current user
-    const user = await getCurrentUser();
+    const user = await requireAdminAccess();
 
     // Validate the course ID and get existing course
     const existingCourse = await prisma.course.findUnique({
@@ -181,7 +180,7 @@ export async function updateCourse(courseId: string, data: Partial<CourseSchema>
 export async function deleteCourse(courseId: string) {
   try {
     // Get current user
-    const user = await getCurrentUser();
+    const user = await requireAdminAccess();
 
     // Get existing course and verify ownership
     const existingCourse = await prisma.course.findUnique({
@@ -222,6 +221,8 @@ export async function deleteCourse(courseId: string) {
 export async function getCourses(searchParams?: Record<string, string | string[] | undefined>) {
   try {
 
+    
+
      // Parse and validate filter parameters
     const filters = courseFilterSchema.parse({
       search: searchParams?.search || "",
@@ -231,6 +232,7 @@ export async function getCourses(searchParams?: Record<string, string | string[]
       sortOrder: searchParams?.sortOrder || "desc",
     });
 
+   
     // Get current user
     const user = await getCurrentUser();
 
@@ -238,6 +240,24 @@ export async function getCourses(searchParams?: Record<string, string | string[]
     const whereClause : any = {
       userId: user.id
     };
+
+
+    //implement filters
+    if (filters.search) {
+      whereClause.title = {
+        contains: filters.search,
+        mode: "insensitive"
+      };
+    }
+
+    if (filters.category) {
+      whereClause.category = {
+        equals: filters.category
+      };
+    }
+
+    
+
     const [courses,totalCount] = await Promise.all([
       prisma.course.findMany({
         where:whereClause
@@ -272,7 +292,7 @@ export async function getCourses(searchParams?: Record<string, string | string[]
  */
 export async function getCourseById(courseId: string) {
   try {
-    const user = await getCurrentUser();
+    const user = await requireAdminAccess();
 
     const course = await prisma.course.findFirst({
       where: {
@@ -309,7 +329,7 @@ export async function getCourseById(courseId: string) {
  */
 export async function getCourseBySlug(slug: string) {
   try {
-    const user = await getCurrentUser();
+    const user = await requireAdminAccess();
 
     const course = await prisma.course.findFirst({
       where: {
@@ -346,7 +366,7 @@ export async function getCourseBySlug(slug: string) {
  */
 export async function toggleCourseStatus(courseId: string) {
   try {
-    const user = await getCurrentUser();
+    const user = await requireAdminAccess();
 
     const existingCourse = await prisma.course.findFirst({
       where: {
@@ -394,7 +414,7 @@ export async function toggleCourseStatus(courseId: string) {
  */
 export async function duplicateCourse(courseId: string) {
   try {
-    const user = await getCurrentUser();
+    const user = await requireAdminAccess();
 
     const existingCourse = await prisma.course.findFirst({
       where: {

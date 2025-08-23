@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { env } from '@/lib/env';
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner"
 import { S3 } from '@/lib/s3-client';
+import arcjet, { detectBot, fixedWindow } from '@/lib/arcjet';
+import { getCurrentUser, requireAdminAccess } from '@/lib/data/admin/user-session';
 
 export const fileUploadSchema = z.object({
    fileName: z.string().min(1, "File name is required"),
@@ -14,14 +16,36 @@ export const fileUploadSchema = z.object({
    
 });
 
+const aj = arcjet
+   .withRule(
+      detectBot({
+         mode: 'LIVE',
+         allow: []
+      })
+   ).withRule(
+      fixedWindow({
+         mode: 'LIVE',
+         window: "1m",
+         max: 5
+      })
+   )
+
 export async function POST(request: Request) {
+   
+   const session = await requireAdminAccess();
+
    try {
+
+      const decision = await aj.protect(request, { fingerprint: session.id });
+      if (decision.isDenied()) {
+         return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+      }
       const body = await request.json();
-      console.log("this is boday",body);
+      console.log("this is body", body);
       const validation = fileUploadSchema.safeParse(body);
-      
-      if(!validation.success) {
-         return NextResponse.json({error: "Invalid Request Body"},{status: 400});
+
+      if (!validation.success) {
+         return NextResponse.json({ error: "Invalid Request Body" }, { status: 400 });
       }
 
       const { fileName, contentType, size, isImage } = validation.data;

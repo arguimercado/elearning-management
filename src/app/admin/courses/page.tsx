@@ -12,7 +12,7 @@ import {
    DollarSign,
 } from "lucide-react";
 import { ROUTES } from "@/model/constants/router";
-import { getCourses } from "@/lib/actions/course-action";
+import { getCourses } from "@/lib/data/course/course-service";
 import React from "react";
 import { CoursesDataTable } from "./_components/courses-data-table";
 
@@ -39,21 +39,20 @@ function CoursesLoading() {
 
 
 interface CoursesPageProps {
-   searchParams?: {
-      search?: string;
-      category?: string;
-      level?: string;
-      status?: string;
-      page?: string;
-      limit?: string;
-   };
+   search?: string;
+   category?: string;
+   level?: string;
+   status?: string;
+   page?: string;
+   limit?: string;
 }
 
-const CoursesPage = async ({ searchParams }: CoursesPageProps) => {
-   // Fetch courses data on the server
-   
+const CoursesPage = async (props: {searchParams? : Promise<CoursesPageProps>}) => {
 
-   const result = await getCourses(searchParams);
+   var params = await props.searchParams ?? {};
+   // Ensure params is of the correct type for getCourses
+   const result = await getCourses(params as Record<string, string | string[] | undefined>);
+
    const coursesData = result?.data;
    const stats = coursesData
       ? {

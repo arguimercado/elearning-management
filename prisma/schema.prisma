@@ -25,6 +25,11 @@ model User {
   sessions      Session[]
   accounts      Account[]
   courses       Course[]
+  role          String?
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?
+
   @@unique([email])
   @@map("user")
 }
@@ -39,6 +44,8 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@map("session")
@@ -75,20 +82,20 @@ model Verification {
 }
 
 model Course {
-  id            String   @id @default(uuid())
-  title         String
-  description   String?
-  slug          String @unique
-  category      String
-  level         CourseLevel @default(BEGINNER) // Beginner, Intermediate, Advanced
-  duration      String   // e.g., "4 weeks", "10 hours"
-  price         Float    @default(0.0)
-  status        CourseStatus @default(Draft) // Draft, Published, Archive 
-  thumbnail     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  userId       String
-  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String       @id @default(uuid())
+  title       String
+  description String?
+  slug        String       @unique
+  category    String
+  level       CourseLevel  @default(BEGINNER) // Beginner, Intermediate, Advanced
+  duration    String // e.g., "4 weeks", "10 hours"
+  price       Float        @default(0.0)
+  status      CourseStatus @default(Draft) // Draft, Published, Archive 
+  thumbnail   String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("course")
 }
