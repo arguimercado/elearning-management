@@ -81,7 +81,7 @@ async function protect(req: NextRequest): Promise<ArcjetDecision> {
     }
   } else {
     // For all other auth requests
-    return arcjet.withRule(detectBot(botOptions)).protect(req, { userId });
+    return arcjet.withRule(detectBot(botOptions)).protect(req, { fingerprint: userId });
   }
 }
 
