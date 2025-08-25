@@ -4,9 +4,33 @@ import { ROUTES } from "@/model/constants/router";
 import CourseFormComponent from "../../_components/course-form";
 import { getCourseByIdQuery } from "@/lib/data/admin/course/queries/getCourseByIdQuery";
 import NoCourse from "../../_components/no-course";
+import { CourseSchema } from "@/model/schemas/course-schema";
 
-const CourseEditPage = async ({params} : {params: {id: string}}) => {
-  const course  = await getCourseByIdQuery(params.id);
+type PageProps = {
+  params: Promise<{id: string}>
+}
+
+const CourseEditPage = async ({params} : PageProps) => {
+  
+  const courseId = (await params).id;
+  const course  = await getCourseByIdQuery(courseId);
+
+  const courseSchema : CourseSchema = {
+    id: course?.data?.id,
+    title: course?.data?.title ?? "",
+    description: course?.data?.description,
+    duration: course?.data?.duration ?? "",
+    category: course?.data?.category ?? "",
+    level: (["BEGINNER", "INTERMEDIATE", "ADVANCED"] as const).includes(course?.data?.level as any)
+      ? course?.data?.level as "BEGINNER" | "INTERMEDIATE" | "ADVANCED"
+      : "BEGINNER",
+    price: course?.data?.price ?? 0,
+    slug: course?.data?.slug ?? "",
+    status: (["Draft", "Published", "Archive"] as const).includes(course?.data?.status as any)
+      ? course?.data?.status as "Draft" | "Published" | "Archive"
+      : "Draft",
+    thumbnail: course?.data?.thumbnail ?? "",
+  }
   
   if(!course || !course?.success) {
     return (<NoCourse />)
@@ -27,7 +51,7 @@ const CourseEditPage = async ({params} : {params: {id: string}}) => {
       />
       <CourseFormComponent
         isEdit={true} 
-        initialValues={course?.data || undefined} />
+        initialValues={courseSchema || undefined} />
     </div>
   )
 }

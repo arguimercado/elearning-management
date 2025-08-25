@@ -18,14 +18,14 @@ async function useScreen(id: string) {
 //get parameters
 
 interface IProps {
-   params: { id: string }
+   params: Promise<{ id: string }>
 }
 
 const ScreenPage = async (props : IProps) => {
-   const courseId = props.params.id;
-  
+   const courseId = (await props.params).id;
+
    const { courses, lessons } = await useScreen(courseId);
-   console.log(courses.data?.lessons);
+   
 
 
    if(!courses?.data) return notFound();

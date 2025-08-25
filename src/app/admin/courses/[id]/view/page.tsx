@@ -4,12 +4,13 @@ import TabViewCourse from "./_components/tab-view-course";
 import { getCourseByIdQuery, GetCourseResponse } from "@/lib/data/admin/course/queries/getCourseByIdQuery";
 import NoCourse from "../../_components/no-course";
 
-interface CourseViewPageProps {
-   params: { id: string }
+interface PageProps {
+   params: Promise<{ id: string }>
 }
 
-const CourseViewPage = async ({ params }: CourseViewPageProps) => {
-   const course  = await getCourseByIdQuery(params.id);
+const CourseViewPage = async ({ params }: PageProps) => {
+   const courseId = (await params).id;
+   const course  = await getCourseByIdQuery(courseId);
 
    if (!course || !course.success) {
       return <NoCourse />
