@@ -118,6 +118,15 @@ export const defaultCourseFormValues: Partial<CourseSchema> = {
   thumbnail: "",
 };
 
+
+export const fileUploadSchema = z.object({
+   fileName: z.string().min(1, "File name is required"),
+   contentType: z.string().min(1, "Content type is required"),
+   size: z.number().min(1, "File size must be greater than 0"),
+   isImage: z.boolean(),
+   
+});
+
 // Lesson schema
 export const lessonSchema = z.object({
   id: z.uuid().optional(),
@@ -129,5 +138,7 @@ export const lessonSchema = z.object({
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date())
 });
+
+
 
 export type LessonSchema = z.infer<typeof lessonSchema>;

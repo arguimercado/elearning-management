@@ -6,15 +6,9 @@ import { env } from '@/lib/env';
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner"
 import { S3 } from '@/lib/s3-client';
 import arcjet, { detectBot, fixedWindow } from '@/lib/arcjet';
-import { getCurrentUser, requireAdminAccess } from '@/lib/data/admin/user-session';
+import { requireAdminAccess } from '@/lib/data/admin/user-session';
+import { fileUploadSchema } from '@/model/schemas/course-schema';
 
-export const fileUploadSchema = z.object({
-   fileName: z.string().min(1, "File name is required"),
-   contentType: z.string().min(1, "Content type is required"),
-   size: z.number().min(1, "File size must be greater than 0"),
-   isImage: z.boolean(),
-   
-});
 
 const aj = arcjet
    .withRule(
@@ -28,7 +22,7 @@ const aj = arcjet
          window: "1m",
          max: 5
       })
-   )
+)
 
 export async function POST(request: Request) {
    
