@@ -94,7 +94,7 @@ const CoursesPage = async (props: {searchParams?: Promise<CoursesPageProps>;}) =
                icon={DollarSign}
             />
          </div>
-         <CoursesTabs coursesData={coursesData?.data || []} />
+         <CoursesTabs coursesData={result?.data?.data || []} />
       </div>
    );
 };
