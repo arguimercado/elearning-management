@@ -9,6 +9,7 @@ interface TabViewCourseProps {
 }
 
 const TabViewCourse = ({ course }: TabViewCourseProps) => {
+   console.log(course);
    return (
       <Tabs className="w-full" defaultValue="detail">
          <TabsList className="w-full grid grid-cols-3">
@@ -20,7 +21,7 @@ const TabViewCourse = ({ course }: TabViewCourseProps) => {
             <CourseInfo course={course} />
          </TabsContent>
          <TabsContent value="lesson" className="pt-4">
-            <CourseLessonList courseId={course.id} />
+            <CourseLessonList courseLessons={course.lessons ?? []} courseId={course.id} />
          </TabsContent>
          <TabsContent value="settings" className="pt-4">
             <Card>

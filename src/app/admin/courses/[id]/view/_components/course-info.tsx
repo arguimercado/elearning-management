@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Clock, DollarSign, CalendarDays, Layers, Hash } from "lucide-react";
+import { Clock, DollarSign, CalendarDays, Layers, Hash, BookOpen } from "lucide-react";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import {formatDate} from "date-fns"
 
 interface CourseInfoProps {
    course: CourseModel & {
@@ -32,6 +33,11 @@ const MetaItem = ({ icon: Icon, label, value }: { icon: any; label: string; valu
 )
 
 const CourseInfo = ({ course }: CourseInfoProps) => {
+
+   const totalLessons = course?.lessons?.length || 0;
+   const createdAt = course.createdAt ? formatDate(course.createdAt, "MMMM dd, yyyy") : null;
+   const updatedAt = course.updatedAt ? formatDate(course.updatedAt, "MMMM dd, yyyy") : null;
+
    return (
       <div className="space-y-6">
          <Card className="overflow-hidden">
@@ -72,8 +78,13 @@ const CourseInfo = ({ course }: CourseInfoProps) => {
                   <MetaItem icon={Layers} label="Category" value={course.category} />
                   <MetaItem icon={Clock} label="Duration" value={course.duration} />
                   <MetaItem icon={DollarSign} label="Price" value={new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(course.price)} />
-                  <MetaItem icon={CalendarDays} label="Created" value={new Date(course.createdAt).toLocaleDateString()} />
-                  <MetaItem icon={CalendarDays} label="Last Updated" value={new Date(course.updatedAt).toLocaleDateString()} />
+                  {createdAt && (
+                     <MetaItem icon={CalendarDays} label="Created" value={createdAt} />
+                  )}
+                  {updatedAt && (
+                     <MetaItem icon={CalendarDays} label="Last Updated" value={updatedAt} />
+                  )}
+                  <MetaItem icon={BookOpen} label="Total Lessons" value={totalLessons} />
                </div>
 
                <Separator />

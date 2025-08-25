@@ -1,9 +1,41 @@
-import PageHeader from "@/components/commons/misc/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { DataTable } from "@/components/commons/data/data-table";
+import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
+import { ColumnHelpers } from "@/components/commons/data/columns/column-template";
 
-const CourseLessonList = ({courseId} : {courseId: string}) => {
+
+const { text, badge, date, currency, actions, truncate } = ColumnHelpers;
+const columns : ColumnDef<CourseLessonModel>[] = [
+   text({
+      accessorKey: "title",
+      header: "Title",
+   }),
+   truncate({
+      accessorKey: "description",
+      header: "Description",
+      maxLength: 50,
+   }),
+   {
+   id: "actions",
+   header: "Actions",
+   cell: ({ row }) => {
+      const courseId = row.original.courseId;
+      const id = row.original.id;
+      return (
+         <Button asChild>
+            <Link href={`/admin/courses/${courseId}/lesson/${row.original.id}/edit`}>Edit</Link>
+         </Button>
+      );
+   },
+},
+]
+
+const CourseLessonList = ({courseId, courseLessons} : {courseId: string, courseLessons: CourseLessonModel[]}) => {
+
+
+
    return (
      <Card className="w-full">
       <CardHeader className="flex flex-row justify-between items-center">
@@ -18,7 +50,7 @@ const CourseLessonList = ({courseId} : {courseId: string}) => {
          </Button>
       </CardHeader>
       <CardContent>
-
+         <DataTable columns={columns} data={courseLessons} />
       </CardContent>
      </Card>
    );

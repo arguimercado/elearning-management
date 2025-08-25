@@ -10,6 +10,8 @@ import InputField from "@/components/commons/inputs/input-field";
 import { Button } from "@/components/ui/button";
 import RichTextEditor from "@/components/commons/inputs/rich-text-editor/editor";
 import { toast } from "sonner";
+import { createCourseLessonCommand } from "@/lib/data";
+import { useRouter } from "next/navigation";
 
 // Placeholder server actions (user can replace with real implementations)
 // import { createLessonCommand, updateLessonCommand } from "@/lib/data/lesson";
@@ -17,8 +19,7 @@ import { toast } from "sonner";
 interface CourseLessonFormProps {
   courseId: string; // parent course id
   initialValues?: Partial<LessonSchema>; // for edit mode
-  onSuccess?: (lesson: LessonSchema) => void; // callback after success
-  onCancel?: () => void;
+  
 }
 
 const defaultValues: Partial<LessonSchema> = {
@@ -31,9 +32,8 @@ const defaultValues: Partial<LessonSchema> = {
 const CourseLessonForm = ({
   courseId,
   initialValues,
-  onSuccess,
-  onCancel,
 }: CourseLessonFormProps) => {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<LessonSchema>({
@@ -61,14 +61,9 @@ const CourseLessonForm = ({
       try {
         // Replace with real server action
         // const result = values.id
-        //   ? await updateLessonCommand(values.id, values)
-        //   : await createLessonCommand(values);
-
-        // Simulate success
-        await new Promise((r) => setTimeout(r, 500));
+        await createCourseLessonCommand(values);
         toast.success(values.id ? "Lesson updated" : "Lesson created");
-        onSuccess?.(values);
-        form.reset({ ...defaultValues, courseId } as any);
+        router.push(`/admin/courses/${courseId}/view`);
       } catch (e: any) {
         toast.error(e.message || "Failed to save lesson");
       }
@@ -131,16 +126,7 @@ const CourseLessonForm = ({
         </Card>
 
         <div className="flex justify-end gap-3">
-          {onCancel && (
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isPending}
-              onClick={() => onCancel?.()}
-            >
-              Cancel
-            </Button>
-          )}
+        
           <Button type="submit" disabled={isPending}>
             {isPending ? "Saving..." : initialValues?.id ? "Update Lesson" : "Create Lesson"}
           </Button>

@@ -1,6 +1,6 @@
 "use client"
 
-import { DataTable } from "@/components/ui/data-table"
+import { DataTable } from "@/components/commons/data/data-table"
 import { columns } from "./columns"
 
 interface CoursesDataTableProps {

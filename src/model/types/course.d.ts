@@ -10,14 +10,18 @@ declare interface CourseModel {
   price: number;
   status: string;
   thumbnail?: string | null;
-  courseLessons?: CourseLessonModel[];
+  createdAt?: Date;
+  updatedAt?: Date;
+  lessons?: CourseLessonModel[];
 }
 
 declare interface CourseLessonModel {
   id: string;
   title: string;
-  description?: string | null;
-  contentUrl: string;
-  chapter: number;
+  description?: string | null | undefined;
+  contentUrl?: string | null | undefined;
+  chapter: string;
   courseId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

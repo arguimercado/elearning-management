@@ -32,11 +32,19 @@ export async function getCourseByIdQuery(courseId: string) : Promise<ApiResponse
             title: true,
             chapter: true,
             description: true,
-            contentUrl: true
+            contentUrl: true,
+            courseId: true,
+            createdAt: true,
+            updatedAt: true
+          },
+          orderBy: {
+            createdAt: "asc"
           }
         }
       }
     });
+
+   
 
     if (!course) {
        throw new Error("Course not found");
@@ -44,7 +52,7 @@ export async function getCourseByIdQuery(courseId: string) : Promise<ApiResponse
 
     return {
       success: true,
-      data: course,
+      data: {...course, lessons: course.lessons.map(lesson => ({...lesson}))},
       message: "Course fetched successfully",
     };
 

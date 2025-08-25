@@ -102,15 +102,15 @@ const  CoursePage = async (props: PageProps) => {
                )}
 
                {/* Curriculum */}
-                     {course.courseLessons && course.courseLessons.length > 0 && (
+                     {course.lessons && course.lessons.length > 0 && (
                   <Card className="border-muted/60">
                      <CardHeader>
                         <CardTitle className="text-lg">Course Outline</CardTitle>
-                              <CardDescription>{course.courseLessons.length} lesson{course.courseLessons.length > 1 ? 's' : ''}</CardDescription>
+                              <CardDescription>{course.lessons.length} lesson{course.lessons.length > 1 ? 's' : ''}</CardDescription>
                      </CardHeader>
                      <CardContent className="space-y-2">
                         <ol className="space-y-3 counter-reset list-decimal">
-                                 {course.courseLessons.map((l: any, idx: number) => (
+                                 {course.lessons.map((l: any, idx: number) => (
                               <li key={l.id} className="flex gap-3 rounded-md border bg-muted/30 p-3 text-sm items-start">
                                  <div className="mt-0.5 text-muted-foreground font-medium">{idx + 1}.</div>
                                  <div className="flex-1 space-y-1">
