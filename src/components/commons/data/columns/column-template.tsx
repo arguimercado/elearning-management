@@ -1,3 +1,4 @@
+//@typescript-eslint/no-explicit-any
 "use client"
 
 // Generic column helper utilities for the DataTable (TanStack v8)

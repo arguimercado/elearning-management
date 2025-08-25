@@ -7,7 +7,6 @@ import EditorMenubar from "@/components/commons/inputs/rich-text-editor/editor-m
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 
-import { useEffect } from "react";
 import {TextStyleKit} from "@tiptap/extension-text-style";
 
 

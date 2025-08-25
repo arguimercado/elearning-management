@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ArrowUpDown, MoreHorizontal, Eye, Edit, Trash2, Clock, DollarSign } from "lucide-react"
+import { MoreHorizontal, Eye, Edit, Trash2, Clock, DollarSign } from "lucide-react"
 import Link from "next/link"
 import { ROUTES } from "@/model/constants/router"
 import { ColumnHelpers } from "@/components/commons/data/columns/column-template"

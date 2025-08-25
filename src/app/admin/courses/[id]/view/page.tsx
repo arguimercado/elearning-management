@@ -1,7 +1,7 @@
 import PageHeader from "@/components/commons/misc/page-header";
 import { ROUTES } from "@/model/constants/router";
 import TabViewCourse from "./_components/tab-view-course";
-import { getCourseByIdQuery, GetCourseResponse } from "@/lib/data/admin/course/queries/getCourseByIdQuery";
+import { getCourseByIdQuery } from "@/lib/data/admin/course/queries/getCourseByIdQuery";
 import NoCourse from "../../_components/no-course";
 
 interface PageProps {

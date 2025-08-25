@@ -1,3 +1,4 @@
+//@typescript-eslint/no-unused-vars
 
 import PageHeader from "@/components/commons/misc/page-header";
 import { ROUTES } from "@/model/constants/router";
@@ -21,7 +22,7 @@ const CourseEditPage = async ({params} : PageProps) => {
     description: course?.data?.description,
     duration: course?.data?.duration ?? "",
     category: course?.data?.category ?? "",
-    level: (["BEGINNER", "INTERMEDIATE", "ADVANCED"] as const).includes(course?.data?.level as any)
+    level: (["BEGINNER", "INTERMEDIATE", "ADVANCED"] as const).includes((course?.data?.level ?? "BEGINNER") as any)
       ? course?.data?.level as "BEGINNER" | "INTERMEDIATE" | "ADVANCED"
       : "BEGINNER",
     price: course?.data?.price ?? 0,
@@ -36,10 +37,7 @@ const CourseEditPage = async ({params} : PageProps) => {
     return (<NoCourse />)
   }
 
-  const handleFormSubmit = async (values: any) => {
-    // Call the server action to update course
-    console.log("Updated Course Data:", values);
-  }
+  
   
   return (
     <div className="space-y-6">

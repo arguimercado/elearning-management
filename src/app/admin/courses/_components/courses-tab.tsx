@@ -8,7 +8,6 @@ import { CoursesDataTable } from "./courses-data-table"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
-// @ts-ignore - transient resolution until TS server picks up the file
 import CourseGrid from "./course-grid"
 
 interface CoursesTabsProps {

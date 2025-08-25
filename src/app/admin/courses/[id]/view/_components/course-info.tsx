@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Clock, DollarSign, CalendarDays, Layers, Hash, BookOpen } from "lucide-react";
+import { Clock, DollarSign, CalendarDays, Layers, Hash, BookOpen, LucideIcon } from "lucide-react";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -25,7 +25,7 @@ const statusColors: Record<string, string> = {
    Archive: "bg-red-100 text-red-800 dark:bg-red-500/15 dark:text-red-300",
 }
 
-const MetaItem = ({ icon: Icon, label, value }: { icon: any; label: string; value: React.ReactNode }) => (
+const MetaItem = ({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: React.ReactNode }) => (
    <div className="flex flex-col gap-1 rounded-md border bg-muted/40 p-3 text-xs sm:text-sm">
       <div className="flex items-center gap-1.5 font-medium text-muted-foreground"><Icon className="h-3.5 w-3.5"/> {label}</div>
       <div className="font-semibold text-foreground break-words">{value}</div>

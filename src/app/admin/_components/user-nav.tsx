@@ -13,11 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-interface IProps {
-   name:string;
-   email:string;
-   avatar?:string;
-}
+
 
 const UserNav = () => {
 

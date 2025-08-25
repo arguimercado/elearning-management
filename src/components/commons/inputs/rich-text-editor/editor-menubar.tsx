@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import {type Editor, useEditorState} from "@tiptap/react"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
@@ -39,29 +40,28 @@ const ButtonTooltipMenu = ({children, tooltipText, onClick, className,toggle}: I
 
 const EditorMenubar = ({editor} : IProps) => {
 
-  if(!editor)
-    return null;
+
 
   const editorState = useEditorState({
     editor: editor,
     selector: ctx => {
       return {
-        isBold: ctx.editor.isActive("bold"),
-        isItalic: ctx.editor.isActive("italic"),
-        isUnderlined: ctx.editor.isActive("underline"),
-        isHeading1: ctx.editor.isActive("heading", { level: 1 }),
-        isHeading2: ctx.editor.isActive("heading", { level: 2 }),
-        isHeading3: ctx.editor.isActive("heading", { level: 3 }),
-        isBulletList: ctx.editor.isActive("bulletList"),
-        isOrderedList: ctx.editor.isActive("orderedList"),
-        isBlockquote: ctx.editor.isActive("blockquote"),
-        isLink: ctx.editor.isActive("link"),
-        isImage: ctx.editor.isActive("image"),
-        isTable: ctx.editor.isActive("table"),
-        isCodeBlock: ctx.editor.isActive("codeBlock"),
-        isAlignLeft: ctx.editor.isActive({ textAlign: "left" }),
-        isAlignCenter: ctx.editor.isActive({ textAlign: "center" }),
-        isAlignRight: ctx.editor.isActive({ textAlign: "right" }),
+        isBold: ctx.editor?.isActive("bold"),
+        isItalic: ctx.editor?.isActive("italic"),
+        isUnderlined: ctx.editor?.isActive("underline"),
+        isHeading1: ctx.editor?.isActive("heading", { level: 1 }),
+        isHeading2: ctx.editor?.isActive("heading", { level: 2 }),
+        isHeading3: ctx.editor?.isActive("heading", { level: 3 }),
+        isBulletList: ctx.editor?.isActive("bulletList"),
+        isOrderedList: ctx.editor?.isActive("orderedList"),
+        isBlockquote: ctx.editor?.isActive("blockquote"),
+        isLink: ctx.editor?.isActive("link"),
+        isImage: ctx.editor?.isActive("image"),
+        isTable: ctx.editor?.isActive("table"),
+        isCodeBlock: ctx.editor?.isActive("codeBlock"),
+        isAlignLeft: ctx.editor?.isActive({ textAlign: "left" }),
+        isAlignCenter: ctx.editor?.isActive({ textAlign: "center" }),
+        isAlignRight: ctx.editor?.isActive({ textAlign: "right" }),
       }
     }
   })

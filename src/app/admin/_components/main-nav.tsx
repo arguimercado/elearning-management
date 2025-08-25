@@ -1,17 +1,11 @@
 
 
 import {
-  Calendar,
   ChevronRight,
   Home,
-  Inbox,
-  Users,
   BarChart3,
   FileText,
-  Building,
-  GraduationCap,
   BookOpen,
-  CreditCard,
 } from "lucide-react"
 
 import {

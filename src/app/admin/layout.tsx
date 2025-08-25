@@ -1,11 +1,8 @@
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "./_components/app-sidebar"
 import { DashboardHeader } from "./_components/dashboard-header"
-import { requireAdminAccess } from "@/lib/data/admin/user-session";
 
 const DashboardLayout = async ({children} : {children: React.ReactNode}) => {
-
-  const session = await requireAdminAccess();
   
   
   return (

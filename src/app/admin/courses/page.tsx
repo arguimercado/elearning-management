@@ -1,3 +1,4 @@
+//@typescript-eslint/no-explicit-any
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/commons/misc/page-header";
@@ -18,28 +19,29 @@ interface CoursesPageProps {
    limit?: string;
 }
 
-async function useCourses(params: CoursesPageProps) {
 
+const CoursesPage = async (props: {searchParams?: Promise<CoursesPageProps>;}) => {
+   
+   var params = (await props.searchParams) ?? {};
    // Ensure params is of the correct type for getCourses
    const result = await getCoursesQuery(
       params as Record<string, string | string[] | undefined>
    );
 
    if (!result.success) {
-      return { coursesData: null, stats: null };
+      return <div>Error loading courses data</div>;
    }
 
-   const coursesData = result.data;
-   const stats = coursesData
+   const stats = result.data
       ? {
-           totalCourses: coursesData.totalCount,
-           publishedCourses: coursesData.data.filter(
+           totalCourses: result.data.totalCount,
+           publishedCourses: result.data.data.filter(
               (c: any) => c.status === "Published"
            ).length,
-           draftCourses: coursesData.data.filter(
+           draftCourses: result.data.data.filter(
               (c: any) => c.status === "Draft"
            ).length,
-           totalRevenue: coursesData.data
+           totalRevenue: result.data.data
               .filter((c: any) => c.status === "Published")
               .reduce((sum: number, course: any) => sum + course.price, 0),
         }
@@ -49,17 +51,8 @@ async function useCourses(params: CoursesPageProps) {
            draftCourses: 0,
            totalRevenue: 0,
         };
-   return { coursesData, stats };
-}
 
-const CoursesPage = async (props: {searchParams?: Promise<CoursesPageProps>;}) => {
-   
-   var params = (await props.searchParams) ?? {};
-   const { coursesData, stats } = await useCourses(params);
-
-   if(coursesData === null || stats === null) {
-      return <div>Error loading courses data</div>;
-   }
+  
 
    return (
       <div className="space-y-6">

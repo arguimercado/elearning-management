@@ -1,3 +1,4 @@
+//@typescript-eslint/no-explicit-any
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,77 +39,6 @@ const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
       fileType: "image",
       key: value || undefined,
    });
-
-   const onDrop = useCallback((acceptedFiles: File[]) => {
-      if (acceptedFiles.length > 0) {
-         const file = acceptedFiles[0];
-
-         if(fileState.objectUrl && !fileState.objectUrl.startsWith("http:")) {
-            URL.revokeObjectURL(fileState.objectUrl);
-         }
-
-         setFileState({
-            file: file,
-            uploading: false,
-            progress: 0,
-            objectUrl: URL.createObjectURL(file),
-            isError: false,
-            id: uuidv4(),
-            isDeleting: false,
-            fileType: "image",
-         });
-
-         uploadFile(file);
-         
-      }
-   }, [fileState.objectUrl]);
-
-   const handleRemoveFile = async () => {
-      if(fileState.isDeleting || !fileState.objectUrl) {
-         return;
-      }
-
-      try {
-         setFileState((prev) => ({
-            ...prev,
-            isDeleting: true,
-         }));
-
-         const response = await fetch(`/api/s3/delete`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ key: fileState.key }),
-         });
-
-         if (!response.ok) {
-            throw new Error("Failed to delete file");
-         }
-
-         if(fileState.objectUrl && !fileState.objectUrl.startsWith("http:")) {
-            URL.revokeObjectURL(fileState.objectUrl);
-         }
-         setFileState({
-            id: null,
-            file: null,
-            uploading: false,
-            progress: 0,
-            objectUrl: undefined,
-            isError: false,
-            isDeleting: false,
-            fileType: "image",
-         });
-         onChange?.("");
-         toast.success("File deleted successfully");
-      } 
-      catch (error: any) {
-         toast.error("Failed to delete file");
-          setFileState((prev) => ({
-               ...prev,
-               isError: true,
-               isDeleting: false,
-            }));
-      }
-   }
 
    const uploadFile = useCallback(async (file: File) => {
       setFileState((prev) => ({
@@ -197,6 +127,79 @@ const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
       }
    }, []);
 
+   const onDrop = useCallback((acceptedFiles: File[]) => {
+      if (acceptedFiles.length > 0) {
+         const file = acceptedFiles[0];
+
+         if(fileState.objectUrl && !fileState.objectUrl.startsWith("http:")) {
+            URL.revokeObjectURL(fileState.objectUrl);
+         }
+
+         setFileState({
+            file: file,
+            uploading: false,
+            progress: 0,
+            objectUrl: URL.createObjectURL(file),
+            isError: false,
+            id: uuidv4(),
+            isDeleting: false,
+            fileType: "image",
+         });
+
+         uploadFile(file);
+         
+      }
+   }, []);
+
+   const handleRemoveFile = async () => {
+      if(fileState.isDeleting || !fileState.objectUrl) {
+         return;
+      }
+
+      try {
+         setFileState((prev) => ({
+            ...prev,
+            isDeleting: true,
+         }));
+
+         const response = await fetch(`/api/s3/delete`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: fileState.key }),
+         });
+
+         if (!response.ok) {
+            throw new Error("Failed to delete file");
+         }
+
+         if(fileState.objectUrl && !fileState.objectUrl.startsWith("http:")) {
+            URL.revokeObjectURL(fileState.objectUrl);
+         }
+         setFileState({
+            id: null,
+            file: null,
+            uploading: false,
+            progress: 0,
+            objectUrl: undefined,
+            isError: false,
+            isDeleting: false,
+            fileType: "image",
+         });
+         onChange?.("");
+         toast.success("File deleted successfully");
+      } 
+      catch (error: any) {
+         toast.error("Failed to delete file");
+          setFileState((prev) => ({
+               ...prev,
+               isError: true,
+               isDeleting: false,
+            }));
+      }
+   }
+
+   
+
    const rejectedFiles = (fileRejection: FileRejection[]) => {
       if (fileRejection.length) {
          const tooManyFiles = fileRejection.find(
@@ -230,7 +233,7 @@ const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
       }
 
       return <RenderEmptyState isDragActive={isDragActive} />
-   }, [fileState]);
+   }, []);
 
    useEffect(() => {
       return () => {
