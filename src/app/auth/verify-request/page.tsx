@@ -10,10 +10,12 @@ import { ShieldCheck } from "lucide-react";
 import OtpForm from "./(compontents)/otp-form";
 
 
-type SearchParams = { [key: string]: string | string[] | undefined };
+type SearchParams = { 
+  params: Promise<{ email: string | undefined }> 
+};
 
-const VerifyRequest = ({ searchParams }: { searchParams?: SearchParams }) => {
-  const rawEmail = searchParams?.email;
+const VerifyRequest = async (props: SearchParams) => {
+  const rawEmail = (await props.params)?.email;
   let email = "";
   if (Array.isArray(rawEmail)) {
     email = rawEmail[0] ?? "";
