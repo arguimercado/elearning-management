@@ -1,10 +1,13 @@
 import PageHeader from "@/components/commons/misc/page-header";
 import CourseLessonForm from "../_components/course-lesson-form";
 
-const LessonFormPage = (props : { params: { id: string } }) => {
+interface PageProps {
+   params: Promise<{ id: string }>; // Next.js (app router) async params
+}
 
-   const courseId = props.params.id;
-   
+const LessonFormPage = async (props : PageProps) => {
+
+   const courseId = (await props.params).id;
    return (
       <div>
          <PageHeader
