@@ -1,11 +1,7 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { DollarSign, Clock } from "lucide-react"
 import Link from "next/link"
 import { ROUTES } from "@/model/constants/router"
-import Image from "next/image"
 import CourseCard from "@/components/commons/misc/course-card"
 
 interface CourseGridProps {
@@ -28,7 +24,7 @@ export default function CourseGrid({ courses }: CourseGridProps) {
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {courses.map(course => (
         <Link key={course.id} href={`${ROUTES.COURSE_LIST}/${course.id}`} prefetch className="group">
-          <CourseCard course={course} />
+          <CourseCard showEditButton={true} showMoreButton={false} course={course} />
         </Link>
       ))}
     </div>

@@ -3,9 +3,10 @@
 export const handleError = (error: unknown, operation: string) => {
   console.error(`Error in ${operation}:`, error);
 
-  if (error instanceof Error) {
-    throw new Error(`Failed to ${operation}: ${error.message}`);
-  }
-
-  throw new Error(`Failed to ${operation}: Unknown error occurred`);
+   return {
+      success: false,
+      data: null,
+      error: new Error(`Failed to ${operation}: ${error instanceof Error ? error.message : "Unknown error occurred"}`),
+      message: `Failed to ${operation}`
+   };
 }

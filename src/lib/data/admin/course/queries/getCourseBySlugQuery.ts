@@ -1,20 +1,18 @@
 "use server"
-import { handleError } from "@/lib/hooks/error";
-import { requireAdminAccess } from "../admin/user-session";
 import { prisma } from "@/lib/db";
-import { success } from "zod";
-import { CourseSchema } from "@/model/schemas/course-schema";
+import { requireAdminAccess } from "../../user-session";
+import { handleError } from "@/lib/hooks/error";
 
 /**
- * Get a single course by ID
+ * Get a single course by slug
  */
-export async function getCourseById(courseId: string) {
+export async function getCourseBySlugQuery(slug: string) : Promise<ApiResponse<CourseModel>> {
   try {
     const user = await requireAdminAccess();
 
     const course = await prisma.course.findFirst({
       where: {
-        id: courseId,
+        slug,
         userId: user.id // Only get user's own courses
       },
       include: {
@@ -29,21 +27,17 @@ export async function getCourseById(courseId: string) {
     });
 
     if (!course) {
-       return {
-        success: false,
-        data: null,
-       }
+      throw new Error("Course not found");
     }
 
     return {
       success: true,
+      message: "Course fetched successfully",
       data: course
     };
 
   } 
   catch (error) {
-    handleError(error, "fetch course");
+    return handleError(error, "fetch course");
   }
 }
-
-export type GetCourseResponse = Awaited<ReturnType<typeof getCourseById>>;

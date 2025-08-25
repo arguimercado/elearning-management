@@ -1,5 +1,5 @@
+"use server"
 
-import "server-only"
 import { headers } from "next/headers";
 import { auth } from "../../auth";
 import { redirect } from "next/navigation";

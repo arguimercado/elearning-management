@@ -2,18 +2,18 @@
 import { handleError } from "@/lib/hooks/error";
 import { ROUTES } from "@/model/constants/router";
 import { revalidatePath } from "next/cache";
-import { requireAdminAccess } from "../admin/user-session";
+
 import { prisma } from "@/lib/db";
 import { courseSchema, CourseSchema } from "@/model/schemas/course-schema";
-import { generateSlug } from "@/lib/hooks/util";
-
+import { generateSlug } from "@/lib/utils";
+import { requireAdminAccess } from "@/lib/data";
 
 
 
 /**
  * Update an existing course
  */
-export async function updateCourse(courseId: string, data: Omit<CourseSchema, "id">) {
+export async function updateCourseCommand(courseId: string, data: Omit<CourseSchema, "id">) : Promise<ApiResponse<CourseModel>> {
   try {
     // Get current user
     const user = await requireAdminAccess();
@@ -100,6 +100,6 @@ export async function updateCourse(courseId: string, data: Omit<CourseSchema, "i
     };
 
   } catch (error) {
-    handleError(error, "update course");
+    return handleError(error, "update course");
   }
 }

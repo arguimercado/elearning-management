@@ -1,7 +1,7 @@
 import PageHeader from "@/components/commons/misc/page-header";
 import { ROUTES } from "@/model/constants/router";
 import TabViewCourse from "./_components/tab-view-course";
-import { getCourseById } from "@/lib/data/course/getCourseById";
+import { getCourseByIdQuery, GetCourseResponse } from "@/lib/data/admin/course/queries/getCourseByIdQuery";
 import NoCourse from "../../_components/no-course";
 
 interface CourseViewPageProps {
@@ -9,9 +9,12 @@ interface CourseViewPageProps {
 }
 
 const CourseViewPage = async ({ params }: CourseViewPageProps) => {
-   const course = await getCourseById(params.id);
+   const course  = await getCourseByIdQuery(params.id);
 
-   if(!course || !course.success || !course.data) {
+   if (!course || !course.success) {
+      return <NoCourse />
+   }
+   if (!('data' in course) || !course.data) {
       return <NoCourse />
    }
 
@@ -23,7 +26,7 @@ const CourseViewPage = async ({ params }: CourseViewPageProps) => {
             backButtonHref={ROUTES.COURSE_LIST}
             showBackButton
          />
-         <TabViewCourse course={course.data as any} />
+         <TabViewCourse course={course.data} />
       </div>
    );
 };

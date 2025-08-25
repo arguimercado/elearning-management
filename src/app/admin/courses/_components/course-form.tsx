@@ -12,11 +12,12 @@ import RichTextEditor from "@/components/commons/inputs/rich-text-editor/editor"
 import FileUploader from "@/components/commons/inputs/files/file-uploader";
 import { useEffect, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { generateSlug } from "@/lib/hooks/util";
+
 import { toast } from "sonner";
 import { ROUTES } from "@/model/constants/router";
 import { useRouter } from "next/navigation";
-import { createCourse, updateCourse } from "@/lib/data/course";
+import { createCourseCommand, updateCourseCommand } from "@/lib/data";
+import { generateSlug } from "@/lib/utils";
 
 const defaultValues: CourseSchema = {
   title: "",
@@ -59,9 +60,9 @@ const useCourseForm = (isEdit: boolean, initialValues?: CourseSchema) => {
   const onSubmit = (values: CourseSchema) => {
     startTransition(async () => {
       try {
-        console.log("Course Data:", values);
+        
         if(isEdit) {
-          const result = await updateCourse(values.id ?? "", values);
+          const result = await updateCourseCommand(values.id ?? "", values);
           if (result?.success) {
             toast.success(result.message || "Updated successfully!");
             router.push(ROUTES.COURSE_LIST);
@@ -71,26 +72,26 @@ const useCourseForm = (isEdit: boolean, initialValues?: CourseSchema) => {
         }
         else {
           // Call the server action to create course
-          const result = await createCourse(values);
+          const result = await createCourseCommand(values);
           if (result?.success) {
             toast.success(result.message || "Course created successfully!");
             router.push(ROUTES.COURSE_LIST);
           } else {
-            throw new Error("Failed to create course");
+            throw new Error(`Failed to create course: ${result.message}`);
           }
-
         }
-        
+
       } 
-      catch (error) {
-        console.error("Error creating course:", error);
-        toast.error(error instanceof Error ? error.message : "Failed to create course. Please try again.");
+      catch (error: any) {
+        toast.error(error.message || "Failed to create course. Please try again.");
       }
     });
   };
+
   const onCancel = () => {
     router.push(ROUTES.COURSE_LIST);
   };
+  
   return {
     form,
     onSubmit,

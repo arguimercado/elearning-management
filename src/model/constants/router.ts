@@ -2,6 +2,9 @@
 
 
 export const ROUTES = {
+   HOME: "/",
+   COURSES: "/courses",
+   SELECTED_COURSE: (id: string) => `/courses/${id}`,
    DASHBOARD: "/admin/dashboard",
    COURSE_LIST: '/admin/courses',
    COURSE_CREATE: '/admin/courses/create',

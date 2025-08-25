@@ -10,11 +10,11 @@ import { ROUTES } from "@/model/constants/router";
 const navItems = [
    {
       name: "Home",
-      href: "/",
+      href: ROUTES.HOME,
    },
    {
       name: "Courses",
-      href: "/courses",
+      href: ROUTES.COURSES,
    },
    {
       name: "Dashboard",

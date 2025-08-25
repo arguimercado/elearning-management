@@ -2,11 +2,11 @@
 import PageHeader from "@/components/commons/misc/page-header";
 import { ROUTES } from "@/model/constants/router";
 import CourseFormComponent from "../../_components/course-form";
-import { getCourseById } from "@/lib/data/course/getCourseById";
+import { getCourseByIdQuery } from "@/lib/data/admin/course/queries/getCourseByIdQuery";
 import NoCourse from "../../_components/no-course";
 
 const CourseEditPage = async ({params} : {params: {id: string}}) => {
-  const course  = await getCourseById(params.id);
+  const course  = await getCourseByIdQuery(params.id);
   
   if(!course || !course?.success) {
     return (<NoCourse />)

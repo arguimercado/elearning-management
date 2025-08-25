@@ -5,11 +5,19 @@ declare interface CourseModel {
   description?: string | null;
   slug: string;
   category: string;
-  level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
+  level: string;
   duration: string;
   price: number;
-  status: "Draft" | "Published" | "Archive";
+  status: string;
   thumbnail?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  courseLessons?: CourseLessonModel[];
+}
+
+declare interface CourseLessonModel {
+  id: string;
+  title: string;
+  description?: string | null;
+  contentUrl: string;
+  chapter: number;
+  courseId: string;
 }

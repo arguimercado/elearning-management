@@ -1,15 +1,16 @@
 "use server"
+import { requireAdminAccess } from "@/lib/data";
 import { prisma } from "@/lib/db";
 import { handleError } from "@/lib/hooks/error";
 import { ROUTES } from "@/model/constants/router";
 import { revalidatePath } from "next/cache";
-import { requireAdminAccess } from "../admin/user-session";
+
 
 
 /**
  * Delete a course
  */
-export async function deleteCourse(courseId: string) {
+export async function deleteCourseCommand(courseId: string) : Promise<ApiResponse<null>> {
   try {
     // Get current user
     const user = await requireAdminAccess();
@@ -37,11 +38,12 @@ export async function deleteCourse(courseId: string) {
 
     return {
       success: true,
+      data: null,
       message: "Course deleted successfully!"
     };
 
   } catch (error) {
-    handleError(error, "delete course");
+    return handleError(error, "delete course");
   }
 }
 

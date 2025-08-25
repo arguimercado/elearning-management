@@ -4,6 +4,7 @@ import {
    Card,
    CardContent,
    CardDescription,
+   CardFooter,
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
@@ -12,26 +13,37 @@ import { getImageUrl } from "@/lib/utils";
 import { Clock, DollarSign, MoreVertical } from "lucide-react";
 import Image from "next/image";
 
-const CourseCard = ({ course }: { course: CourseModel }) => {
+
+interface IProps {
+   course: CourseModel;
+   showEditButton: boolean;
+   showMoreButton: boolean;
+   onEditClick?: (courseId: string,action: string) => void;
+   onMoreClick?: (courseId: string) => void;
+}
+
+const CourseCard = ({ course, showEditButton, showMoreButton, onEditClick, onMoreClick }: IProps) => {
    return (
       <Card className="h-full transition-shadow group-hover:shadow-md p-0 relative">
-         <div className="absolute top-2 right-2 z-10">
-            <DropdownMenu>
-               <DropdownMenuTrigger>
-                  <Button variant="outline" className="h-8 px-2">
-                     <MoreVertical className="h-4 w-4" />
-                  </Button>
-               </DropdownMenuTrigger>
-               <DropdownMenuContent>
-                  <DropdownMenuItem>
-                     Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                     Delete
-                  </DropdownMenuItem>
-               </DropdownMenuContent>
-            </DropdownMenu>
-         </div>
+         {showEditButton && (
+            <div className="absolute top-2 right-2 z-10">
+               <DropdownMenu>
+                  <DropdownMenuTrigger>
+                     <Button variant="outline" className="h-8 px-2">
+                        <MoreVertical className="h-4 w-4" />
+                     </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                     <DropdownMenuItem>
+                        Edit
+                     </DropdownMenuItem>
+                     <DropdownMenuItem>
+                        Delete
+                     </DropdownMenuItem>
+                  </DropdownMenuContent>
+               </DropdownMenu>
+            </div>
+         )}
          <CardHeader className="m-0 p-0">
             {course.thumbnail &&(
                <Image
@@ -39,12 +51,14 @@ const CourseCard = ({ course }: { course: CourseModel }) => {
                   alt={course.title}
                   width={300}
                   height={200}
-                  className="rounded-md object-contain"
+                  className="rounded-md object-cover w-full "
                />
             )}
-            
+             <span className="w-full text-sm px-2 py-0.5 font-medium tracking-wide">
+                  {course.category}
+               </span>
          </CardHeader>
-         <CardContent className="flex flex-col gap-4 p-4">
+         <CardContent className="flex flex-col gap-4 py-2 ">
             <div className="flex items-start justify-between gap-2">
                <CardTitle className="line-clamp-2 text-sm font-semibold leading-snug">
                   {course.title}
@@ -56,12 +70,7 @@ const CourseCard = ({ course }: { course: CourseModel }) => {
                   {course.level}
                </Badge>
             </div>
-            {course.category && (
-               <CardDescription className="mt-1 text-[11px] uppercase tracking-wide">
-                  {course.category}
-               </CardDescription>
-            )}
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-4 text-xs text-muted-foreground ">
                <div className="flex items-center gap-1">
                   <Clock className="h-3.5 w-3.5" />
                   <span>{course.duration}</span>
@@ -76,13 +85,14 @@ const CourseCard = ({ course }: { course: CourseModel }) => {
                   </span>
                </div>
             </div>
-            <div className="mt-auto flex items-center justify-between text-[11px] text-muted-foreground">
-               <span className="rounded bg-muted px-2 py-0.5 font-medium tracking-wide">
-                  {course.status}
-               </span>
-               <span>{new Date(course.createdAt).toLocaleDateString()}</span>
-            </div>
          </CardContent>
+         <CardFooter className="py-2">
+             {showMoreButton && (
+               <Button onClick={() => onMoreClick?.(course.id)} variant="outline" className="mt-2 w-full">
+                  View More
+               </Button>
+            )}
+         </CardFooter>
       </Card>
    );
 };

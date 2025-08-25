@@ -2,11 +2,10 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CourseInfo from "./course-info";
 import { Card, CardContent } from "@/components/ui/card";
+import CourseLessonList from "./coure-lesson-list";
 
 interface TabViewCourseProps {
-   course: CourseModel & {
-      user?: { id: string; name?: string | null; email?: string | null };
-   }
+   course: CourseModel;
 }
 
 const TabViewCourse = ({ course }: TabViewCourseProps) => {
@@ -21,11 +20,7 @@ const TabViewCourse = ({ course }: TabViewCourseProps) => {
             <CourseInfo course={course} />
          </TabsContent>
          <TabsContent value="lesson" className="pt-4">
-            <Card>
-               <CardContent className="py-6">
-                  <p className="text-sm text-muted-foreground">Course outline & lessons will appear here (coming soon).</p>
-               </CardContent>
-            </Card>
+            <CourseLessonList courseId={course.id} />
          </TabsContent>
          <TabsContent value="settings" className="pt-4">
             <Card>

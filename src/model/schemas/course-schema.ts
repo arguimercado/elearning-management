@@ -117,3 +117,17 @@ export const defaultCourseFormValues: Partial<CourseSchema> = {
   status: "Draft",
   thumbnail: "",
 };
+
+// Lesson schema
+export const lessonSchema = z.object({
+  id: z.uuid().optional(),
+  title: z.string().min(1).max(100),
+  chapter: z.string().min(1).max(50),
+  description: z.string().optional().nullable(),
+  contentUrl: z.url().optional().nullable(),
+  courseId: z.uuid(),
+  createdAt: z.date().default(() => new Date()),
+  updatedAt: z.date().default(() => new Date())
+});
+
+export type LessonSchema = z.infer<typeof lessonSchema>;

@@ -1,44 +1,13 @@
-
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/commons/misc/page-header";
 import StatusCard from "@/components/commons/misc/status-card";
-import {
-   Plus,
-   Eye,
-   BookOpen,
-   Clock,
-   DollarSign,
-} from "lucide-react";
+import { Plus, Eye, BookOpen, Clock, DollarSign } from "lucide-react";
 import { ROUTES } from "@/model/constants/router";
 
 import React from "react";
 import CoursesTabs from "./_components/courses-tab";
-import { getCourses } from "@/lib/data/course";
-
-
-
-// Loading component for Suspense
-function CoursesLoading() {
-  return (
-    <div className="space-y-6">
-      {/* Stats Cards Skeleton */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-32 bg-gray-200 rounded-lg animate-pulse" />
-        ))}
-      </div>
-
-      {/* Content Skeleton */}
-      <div className="space-y-4">
-        <div className="h-10 bg-gray-200 rounded animate-pulse" />
-        <div className="h-64 bg-gray-200 rounded animate-pulse" />
-      </div>
-    </div>
-  );
-}
-
+import { getCoursesQuery } from "@/lib/data";
 
 interface CoursesPageProps {
    search?: string;
@@ -49,13 +18,18 @@ interface CoursesPageProps {
    limit?: string;
 }
 
-const CoursesPage = async (props: {searchParams? : Promise<CoursesPageProps>}) => {
+async function useCourses(params: CoursesPageProps) {
 
-   var params = await props.searchParams ?? {};
    // Ensure params is of the correct type for getCourses
-   const result = await getCourses(params as Record<string, string | string[] | undefined>);
+   const result = await getCoursesQuery(
+      params as Record<string, string | string[] | undefined>
+   );
 
-   const coursesData = result?.data;
+   if (!result.success) {
+      return { coursesData: null, stats: null };
+   }
+
+   const coursesData = result.data;
    const stats = coursesData
       ? {
            totalCourses: coursesData.totalCount,
@@ -75,6 +49,17 @@ const CoursesPage = async (props: {searchParams? : Promise<CoursesPageProps>}) =
            draftCourses: 0,
            totalRevenue: 0,
         };
+   return { coursesData, stats };
+}
+
+const CoursesPage = async (props: {searchParams?: Promise<CoursesPageProps>;}) => {
+   
+   var params = (await props.searchParams) ?? {};
+   const { coursesData, stats } = await useCourses(params);
+
+   if(coursesData === null || stats === null) {
+      return <div>Error loading courses data</div>;
+   }
 
    return (
       <div className="space-y-6">

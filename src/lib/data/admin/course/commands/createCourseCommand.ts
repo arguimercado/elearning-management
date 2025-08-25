@@ -3,14 +3,17 @@ import { handleError } from "@/lib/hooks/error";
 import { ROUTES } from "@/model/constants/router";
 import { CourseSchema, courseSchema } from "@/model/schemas/course-schema";
 import { revalidatePath } from "next/cache";
-import { requireAdminAccess } from "../admin/user-session";
-import { generateSlug } from "@/lib/hooks/util";
+
+
 import { prisma } from "@/lib/db";
+import { generateSlug } from "@/lib/utils";
+import { requireAdminAccess } from "@/lib/data";
 
 /**
  * Create a new course
  */
-export async function createCourse(data: CourseSchema) {
+export async function createCourseCommand(data: CourseSchema) : Promise<ApiResponse<CourseModel>> {
+  
   try {
     // Get current user
     const user = await requireAdminAccess();
@@ -66,11 +69,23 @@ export async function createCourse(data: CourseSchema) {
 
     return {
       success: true,
-      data: course,
+      data: {
+        id: course.id,
+        title: course.title,
+        description: course.description,
+        slug: course.slug,
+        category: course.category,
+        level: course.level,
+        duration: course.duration,
+        price: course.price,
+        status: course.status,
+        thumbnail: course.thumbnail,
+      },
       message: "Course created successfully!"
     };
 
-  } catch (error) {
-    handleError(error, "create course");
+  } 
+  catch (error) {
+    return handleError(error, "create course");
   }
 }

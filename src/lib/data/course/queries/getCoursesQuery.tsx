@@ -1,14 +1,15 @@
 "use server"
 import { courseFilterSchema } from "@/model/schemas/course-schema";
-import { getCurrentUser } from "../admin/user-session";
+import { getCurrentUser } from "../../admin/user-session";
 import { prisma } from "@/lib/db";
 import { handleError } from "@/lib/hooks/error";
-import { Pagination } from "@/model/types/global";
+
 
 /**
- * Get courses with filtering and pagination
+ * Ge0t published courses with filtering and pagination
  */
-export async function getCourses(searchParams?: Record<string, string | string[] | undefined>) {
+export async function getCoursesQuery(searchParams?: Record<string, string | string[] | undefined>)
+: Promise<ApiResponse<Pagination<CourseModel>>> {
   try {
      // Parse and validate filter parameters
     const filters = courseFilterSchema.parse({
@@ -19,16 +20,12 @@ export async function getCourses(searchParams?: Record<string, string | string[]
       sortOrder: searchParams?.sortOrder || "desc",
     });
 
-   
-    // Get current user
-    const user = await getCurrentUser();
+    
 
    
     const whereClause : any = {
-      userId: user.id
+      
     };
-
-
     //implement filters
     if (filters.search) {
       whereClause.title = {
@@ -47,9 +44,12 @@ export async function getCourses(searchParams?: Record<string, string | string[]
 
     const [courses,totalCount] = await Promise.all([
       prisma.course.findMany({
-        where:whereClause
+        where:{
+          status: "Published",
+          ...whereClause
+        }
       }),
-      prisma.course.count({where: whereClause})
+      prisma.course.count({where: {status: "Published", ...whereClause}})
     ]);
 
 
@@ -64,15 +64,15 @@ export async function getCourses(searchParams?: Record<string, string | string[]
       limit: filters.limit,
       data: courses
     };
-
     
 
     return {
       success: true,
+      message: "Courses fetched successfully",
       data: data
     };
   } catch (error) {
-    handleError(error, "fetch courses");
+    return handleError(error, "fetch courses");
   }
 }
 
