@@ -39,7 +39,9 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
 
   return (
     <div className="w-full flex flex-col border border-input rounded-lg overflow-hidder dark:bg-input/30 overflow-hidden">
-      <EditorMenubar editor={editor} />
+      {editor && (
+        <EditorMenubar editor={editor} />
+      )}
       <EditorContent editor={editor} />
   </div>)
 }

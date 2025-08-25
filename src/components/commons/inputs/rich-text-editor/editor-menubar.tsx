@@ -6,7 +6,7 @@ import {Toggle} from "@/components/ui/toggle";
 import {Bold, Italic, Underline, Heading1, Heading2, Heading3, List, ListOrdered, Quote, Link as LinkIcon, Image as ImageIcon, Table as TableIcon, Code, Redo2, Undo2, AlignLeft, AlignCenter, AlignRight, Paintbrush2 } from "lucide-react";
 import {cn} from "@/lib/utils";
 interface  IProps {
-  editor: Editor | null
+  editor: Editor
 }
 
 interface IButtonTooltipMenuProps {
@@ -39,9 +39,6 @@ const ButtonTooltipMenu = ({children, tooltipText, onClick, className,toggle}: I
 };
 
 const EditorMenubar = ({editor} : IProps) => {
-
-
-
   const editorState = useEditorState({
     editor: editor,
     selector: ctx => {
