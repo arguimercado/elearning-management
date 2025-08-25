@@ -66,7 +66,6 @@ const EditorMenubar = ({editor} : IProps) => {
     }
   })
 
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   return (
     <div className="w-full flex items-center justify-between p-2 bg-muted rounded-tl-md rounded-tr-md">
@@ -88,8 +87,7 @@ const EditorMenubar = ({editor} : IProps) => {
           {/* Link/Image */}
           <ButtonTooltipMenu tooltipText={"Link"} toggle={editorState.isLink} onClick={() => { const url = window.prompt('Enter URL'); if (url) editor.chain().focus().setLink({ href: url }).run(); }}><LinkIcon /></ButtonTooltipMenu>
 
-          {/* Table */}
-          <ButtonTooltipMenu tooltipText={"Insert Table"} toggle={editorState.isTable} onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}><TableIcon /></ButtonTooltipMenu>
+        
           {/* Code block */}
           <ButtonTooltipMenu tooltipText={"Code Block"} toggle={editorState.isCodeBlock} onClick={() => editor.chain().focus().toggleCodeBlock().run()}><Code /></ButtonTooltipMenu>
           {/* Text color */}
