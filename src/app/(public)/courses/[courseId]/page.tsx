@@ -5,7 +5,6 @@ import CourseNotFoundPart from "./_components/CourseNotFoundPart";
 import { AboutCoursePart } from "./_components";
 import { headers } from "next/dist/server/request/headers";
 import { auth } from "@/lib/auth";
-import { getStudentQuery } from "@/lib/data/clients/queries/getStudentQuery";
 
 
 interface PageProps {

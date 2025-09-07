@@ -35,8 +35,8 @@ const PriceCardPart = ({
    const router = useRouter();
 
    const showEnrolledButton = () => {
-      const currentStudent = course.studentsEnrolled.find(c => c.id === userId)
-      console.log(course);
+      const currentStudent = course.studentsEnrolled?.find(c => c.id === userId);
+    
       if (enableEnrollButton) {
          if (!currentStudent) {
             return (
