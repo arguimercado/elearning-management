@@ -6,20 +6,16 @@
 import PageHeader from "@/components/commons/misc/page-header";
 import { getCoursesQuery } from "@/lib/data";
 import CourseList from "./_components/course-list";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const CoursesPage = async () => {
-   
+
    const data = await getCoursesQuery();
-   const course = {
-      courses: data.data?.data || [],
-      page: data.data?.page || 1,
-      hasNext: data.data?.hasNextPage || false,
-      hasPrevious: data.data?.hasPreviousPage || false,
-      limit: data.data?.limit || 10,
-      totalCount: data.data?.totalCount || 0,
-   }
 
   
+   const { data: dataPagination } = data;
+
 
    return (
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -27,7 +23,7 @@ const CoursesPage = async () => {
             title="Available Courses"
             description="Explore and enroll in courses"
          />
-         <CourseList data={course.courses} />
+         <CourseList courses={dataPagination?.data || []} isEnrolled={false} />
       </div>
    );
 };

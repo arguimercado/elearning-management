@@ -5,7 +5,7 @@ import { handleError } from "@/lib/hooks/error";
 /**
  * Preview a course by ID (no auth required)
  */
-export async function fetchPreviewCourseQuery(courseId: string) {
+export async function fetchPreviewCourseQuery(courseId: string) : Promise<ApiResponse<CourseModel | null>> {
    
    try {
 
@@ -24,16 +24,46 @@ export async function fetchPreviewCourseQuery(courseId: string) {
                   contentUrl: true
                },
                orderBy: { chapter: 'asc' }
-            }
+            },
+            enrolledStudents: true
          }
       });
    
       if (!course) {
          throw new Error("Course not found");
       }
-   
-      // Align with CourseModel property 'courseLessons'
-      const mapped = { ...course, courseLessons: course.lessons } as unknown as CourseModel;
+
+      const studentsEnrolled = await prisma.user.findMany({
+         where: {
+            enrolledCourses: {
+               some: {
+                  courseId: course.id
+               }
+            }
+         }
+      });
+
+
+
+      // Align with CourseModel property 'lessons'
+      const mapped : CourseModel = { 
+            ...course, 
+            lessons: course.lessons.map(lesson => ({
+                id: lesson.id,
+                title: lesson.title,
+                description: lesson.description,
+                chapter: lesson.chapter,
+                contentUrl: lesson.contentUrl,
+                duration: (lesson as any).duration ?? null,
+                courseId: course.id,
+                createdAt: (lesson as any).createdAt ?? null,
+                updatedAt: (lesson as any).updatedAt ?? null
+            })),
+            studentsEnrolled: studentsEnrolled.map(student => ({
+                ...student,
+                role: student.role ?? ""
+            }))
+        };
       return {
          success: true,
          message: "Course fetched successfully",

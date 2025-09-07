@@ -64,7 +64,8 @@ const Navbar = async () => {
                      user={{
                         name: session.user.name,
                         email: session.user.email,
-                        image: session.user.image || null
+                        image: session.user.image || null,
+                        isAdmin: session.user.role === "admin" ? true : false,
                      }}
                   />
                   ) : (<Link className={buttonVariants({ variant: "outline" })} href={ROUTES.AUTH_SIGN_IN}>Sign In</Link>)}

@@ -13,6 +13,7 @@ declare interface CourseModel {
   createdAt?: Date;
   updatedAt?: Date;
   lessons?: CourseLessonModel[];
+  studentsEnrolled: StudentModel[];
 }
 
 declare interface CourseLessonModel {
@@ -20,6 +21,7 @@ declare interface CourseLessonModel {
   title: string;
   description?: string | null | undefined;
   contentUrl?: string | null | undefined;
+  duration: string;
   chapter: string;
   courseId: string;
   createdAt: Date;

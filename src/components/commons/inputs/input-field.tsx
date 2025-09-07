@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Control, FieldPath, FieldValues } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 interface InputFieldProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -57,7 +58,7 @@ function InputField<
               type={type}
               placeholder={placeholder}
               disabled={disabled}
-              className={inputClassName}
+              className={cn("dark:ring-amber-50",inputClassName)}
               {...field}
               value={field.value ?? ""}
             />

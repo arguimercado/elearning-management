@@ -1,9 +1,10 @@
 
-
+``
 
 export const ROUTES = {
    HOME: "/",
    COURSES: "/courses",
+   MY_COURSES: "/my-courses",
    SELECTED_COURSE: (id: string) => `/courses/${id}`,
    DASHBOARD: "/admin/dashboard",
    COURSE_LIST: '/admin/courses',

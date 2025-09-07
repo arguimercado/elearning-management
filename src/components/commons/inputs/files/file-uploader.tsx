@@ -78,7 +78,6 @@ const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
 
          await new Promise<void>((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-
             xhr.upload.onprogress = (event) => {
                if (event.lengthComputable) {
                   const percent = (event.loaded / event.total) * 100;
@@ -91,7 +90,6 @@ const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
 
             xhr.onload = () => {
                if (xhr.status === 200 || xhr.status === 204) {
-                  
                   setFileState((prev) => ({
                      ...prev,
                      uploading: false,
@@ -125,7 +123,7 @@ const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
             isError: true,
          }));
       }
-   }, []);
+   },[]);
 
    const onDrop = useCallback((acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
@@ -149,7 +147,7 @@ const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
          uploadFile(file);
          
       }
-   }, []);
+   }, [fileState]);
 
    const handleRemoveFile = async () => {
       if(fileState.isDeleting || !fileState.objectUrl) {
@@ -197,9 +195,7 @@ const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
             }));
       }
    }
-
    
-
    const rejectedFiles = (fileRejection: FileRejection[]) => {
       if (fileRejection.length) {
          const tooManyFiles = fileRejection.find(
@@ -223,17 +219,15 @@ const FileUploader = ({value, onChange, isPreview = false}: IProps) => {
       if(fileState.uploading) {
          return(<RenderUploadingState progress={fileState.progress} file={fileState.file} />)
       }
-
-      if(fileState.isError) {
+      else if(fileState.isError) {
          return(<RenderErrorState />)
       }
-
-      if(fileState.objectUrl) {
+      else if(fileState.objectUrl) {
+         console.log(fileState.objectUrl);
          return <RenderUploadedState previewUrl={fileState.objectUrl} isDeleting={fileState.isDeleting} onDeleteClick={onDeleteClick} />
       }
-
       return <RenderEmptyState isDragActive={isDragActive} />
-   }, []);
+   }, [fileState]);
 
    useEffect(() => {
       return () => {

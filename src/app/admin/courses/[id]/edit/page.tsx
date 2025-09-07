@@ -2,7 +2,7 @@
 
 import PageHeader from "@/components/commons/misc/page-header";
 import { ROUTES } from "@/model/constants/router";
-import CourseFormComponent from "../../_components/course-form";
+import CourseFormComponent from "../../create/_components/course-form";
 import { getCourseByIdQuery } from "@/lib/data/admin/course/queries/getCourseByIdQuery";
 import NoCourse from "../../_components/no-course";
 import { CourseSchema } from "@/model/schemas/course-schema";

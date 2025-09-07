@@ -25,6 +25,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   courses       Course[]
+  enrolledCourses EnrolledCourse[]
   role          String?
   banned        Boolean?
   banReason     String?
@@ -70,6 +71,19 @@ model Account {
   @@map("account")
 }
 
+model EnrolledCourse {
+  id         String   @id @default(uuid())
+  userId     String
+  courseId   String
+  enrolledAt DateTime @default(now())
+  progress   Float    @default(0.0) // percentage of course completed
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("enrolled_course")
+}
+
 model Verification {
   id         String    @id
   identifier String
@@ -97,10 +111,13 @@ model Course {
   userId      String
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   lessons     Lesson[]
+  enrolledStudents EnrolledCourse[]
 
 
   @@map("course")
 }
+
+
 
 model Lesson {
   id          String       @id @default(uuid())

@@ -1,6 +1,6 @@
 import PageHeader from "@/components/commons/misc/page-header";
 import { ROUTES } from "@/model/constants/router";
-import CourseFormComponent from "../_components/course-form";
+import CourseFormComponent from "./_components/course-form";
 
 const CourseFormPage = () => {
    return (

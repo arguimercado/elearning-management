@@ -87,7 +87,7 @@ const CourseCard = ({ course, showEditButton, showMoreButton, onEditClick, onMor
          </CardContent>
          <CardFooter className="py-2">
              {showMoreButton && (
-               <Button onClick={() => onMoreClick?.(course.id)} variant="outline" className="mt-2 w-full">
+               <Button onClick={() => onMoreClick?.(course.id)}  className="mt-2 w-full">
                   View More
                </Button>
             )}

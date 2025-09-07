@@ -12,12 +12,15 @@ import {
 import { Button } from "@/components/ui/button";
 import Avatar from "@/components/commons/misc/avatar";
 import SignOutButton from "@/components/commons/buttons/signout-button";
-import { User, Settings, HelpCircle, ChevronDown } from "lucide-react";
+import { User, Settings, HelpCircle, ChevronDown, BookAIcon } from "lucide-react";
+import Link from "next/link";
+import { ROUTES } from "@/model/constants/router";
 
 interface UserDropdownProps {
   user: {
     name: string;
     email: string;
+    isAdmin?: boolean;
     image?: string | null;
   };
 }
@@ -64,10 +67,20 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
           <span>Profile</span>
         </DropdownMenuItem>
         
-        <DropdownMenuItem className="cursor-pointer">
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Settings</span>
+        <DropdownMenuItem className="cursor-pointer" asChild>
+          <Link href={ROUTES.MY_COURSES}>
+            <BookAIcon className="mr-2 h-4 w-4" />
+            <span>My Course</span>
+          </Link>
         </DropdownMenuItem>
+        {user.isAdmin && (
+          <DropdownMenuItem className="cursor-pointer" asChild>
+            <Link href={ROUTES.DASHBOARD}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Admin Dashboard</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
         
         <DropdownMenuItem className="cursor-pointer">
           <HelpCircle className="mr-2 h-4 w-4" />

@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import FeatureCard from "./_components/feature-card";
+import { ROUTES } from "@/model/constants/router";
 
 interface FeatureProps {
    title: string;
@@ -59,7 +60,7 @@ const Home = () => {
                            className={buttonVariants({
                               size: "lg",
                            })}
-                           href="/courses"
+                           href={ROUTES.COURSES}
                         >
                            Explore Courses
                         </Link>
