@@ -1,3 +1,4 @@
+"use server"
 import { headers } from "next/headers";
 import { auth } from "../../auth";
 import { redirect } from "next/navigation";
@@ -22,7 +23,7 @@ export async function getCurrentUser() {
     headers: await headers(),
   });
 
-  console.log("")
+
 
   if (!session) {
     return redirect("/auth/sign-in");
