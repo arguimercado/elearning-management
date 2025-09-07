@@ -21,7 +21,7 @@ declare interface CourseLessonModel {
   title: string;
   description?: string | null | undefined;
   contentUrl?: string | null | undefined;
-  duration: string;
+  duration?: string;
   chapter: string;
   courseId: string;
   createdAt: Date;
