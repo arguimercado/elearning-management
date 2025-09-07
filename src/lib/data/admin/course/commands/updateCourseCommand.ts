@@ -93,9 +93,11 @@ export async function updateCourseCommand(courseId: string, data: Omit<CourseSch
       revalidatePath(`/admin/courses/${existingCourse.slug}`);
     }
 
+    const courseModel = { ...updatedCourse, studentsEnrolled:[]  } as CourseModel;
+
     return {
       success: true,
-      data: updatedCourse,
+      data: courseModel,
       message: "Course updated successfully!"
     };
 

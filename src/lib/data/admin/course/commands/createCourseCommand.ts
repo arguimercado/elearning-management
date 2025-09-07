@@ -80,6 +80,7 @@ export async function createCourseCommand(data: CourseSchema) : Promise<ApiRespo
         price: course.price,
         status: course.status,
         thumbnail: course.thumbnail,
+        studentsEnrolled: []
       },
       message: "Course created successfully!"
     };

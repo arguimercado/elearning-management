@@ -13,7 +13,7 @@ declare interface CourseModel {
   createdAt?: Date;
   updatedAt?: Date;
   lessons?: CourseLessonModel[];
-  studentsEnrolled: StudentModel[];
+  studentsEnrolled?: StudentModel[];
 }
 
 declare interface CourseLessonModel {

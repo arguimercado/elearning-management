@@ -43,11 +43,12 @@ export async function toggleCourseStatusCommand(courseId: string) : Promise<ApiR
     });
 
     revalidatePath(ROUTES.COURSE_LIST);
-    
+
+    const courseModel = { ...updatedCourse, studentsEnrolled:[]  } as CourseModel;
 
     return {
       success: true,
-      data: updatedCourse,
+      data: courseModel,
       message: `Course ${newStatus.toLowerCase()} successfully!`
     };
 
